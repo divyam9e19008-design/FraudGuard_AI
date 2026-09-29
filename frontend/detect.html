@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FraudGuard AI — Detect</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{ --orange:#ff6b1a; --orange-bright:#ff8c42; --orange-glow:rgba(255,107,26,.5); --bg:#080706; --text:#f5f5f5; --muted:#9a9a9a; }
+html{ scroll-behavior:smooth; }
+body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body::before{ content:''; position:fixed; inset:0; z-index:-3; pointer-events:none; background:radial-gradient(800px 600px at 72% 42%, rgba(255,107,26,.13), transparent 60%), radial-gradient(600px 500px at 5% 90%, rgba(255,140,66,.06), transparent 55%); animation:bgShift 10s ease-in-out infinite alternate; }
+@keyframes bgShift{ 0%{opacity:.72} 100%{opacity:1} }
+body::after{ content:''; position:fixed; inset:0; z-index:-2; pointer-events:none; background-image:linear-gradient(rgba(255,107,26,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,26,.02) 1px, transparent 1px); background-size:60px 60px; -webkit-mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); }
+.bg-particles{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.bg-particles i{ position:absolute; width:2px; height:2px; border-radius:50%; background:rgba(255,140,66,.5); animation:drift linear infinite; }
+@keyframes drift{ 0%{ transform:translateY(100vh) scale(0); opacity:0; } 10%{opacity:.7;} 90%{opacity:.7;} 100%{ transform:translateY(-10vh) scale(1); opacity:0; } }
+#glow{ position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.13), transparent 62%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .16s cubic-bezier(.22,.61,.36,1); mix-blend-mode:screen; animation:glowPulse 3s ease-in-out infinite; }
+@keyframes glowPulse{ 0%,100%{width:200px;height:200px} 50%{width:250px;height:250px} }
+#glow2{ position:fixed; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,80,.25), transparent 60%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .06s linear; mix-blend-mode:screen; }
+
+nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 46px; background:rgba(8,7,6,.5); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,107,26,.1); }
+.logo{ display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; }
+.logo .mark{ width:30px; height:30px; min-width:30px; border-radius:50%; background:linear-gradient(135deg,#ff6b1a,#ff8c42); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px var(--orange-glow); }
+.logo .mark::after{ content:''; width:11px; height:11px; background:#080706; border-radius:50%; }
+.navlinks{ display:flex; gap:4px; align-items:center; }
+.navlinks a{ color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:500; padding:8px 15px; border-radius:8px; transition:all .2s; }
+.navlinks a:hover{ color:var(--orange-bright); }
+.navlinks a.active{ color:#fff; }
+.navlinks a.active::after{ content:''; display:block; height:2px; width:60%; margin:3px auto 0; background:var(--orange); border-radius:2px; box-shadow:0 0 8px var(--orange-glow); }
+.nav-cta{ padding:9px 22px !important; border:1px solid var(--orange); border-radius:9px; color:var(--orange-bright) !important; font-weight:600; }
+
+/* HERO */
+.hero{ min-height:100vh; display:grid; grid-template-columns:1fr 1.1fr; align-items:center; gap:30px; padding:120px 46px 40px; max-width:1340px; margin:0 auto; }
+.hero-left{ z-index:5; }
+.badge-top{ display:inline-flex; align-items:center; gap:9px; padding:7px 16px; border-radius:30px; margin-bottom:24px; background:rgba(255,107,26,.07); border:1px solid rgba(255,107,26,.22); font-size:.76rem; color:var(--orange-bright); font-weight:600; letter-spacing:1.2px; animation:fadeUp .8s ease both; }
+.badge-top .live{ width:8px; height:8px; border-radius:50%; background:var(--orange); box-shadow:0 0 10px var(--orange); animation:pulse 1.6s infinite; }
+@keyframes pulse{ 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.55} }
+.hero h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(1.9rem,3.6vw,2.9rem); font-weight:700; line-height:1.12; letter-spacing:-1px; margin-bottom:20px; }
+.hero h1 .word{ display:inline-block; opacity:0; transform:translateY(28px) rotateX(-40deg); animation:wordIn .65s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes wordIn{ to{ opacity:1; transform:translateY(0) rotateX(0); } }
+.hero h1 .grad{ background:linear-gradient(100deg,#ff6b1a,#ff8c42,#ffd9a0,#ff8c42,#ff6b1a); background-size:250% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s linear infinite; cursor:pointer; transition:filter .3s; position:relative; }
+@keyframes shimmer{ to{ background-position:250% center; } }
+.hero h1 .grad:hover{ filter:drop-shadow(0 0 22px rgba(255,140,66,.6)) brightness(1.15); }
+.hero h1 .grad::after{ content:''; position:absolute; left:0; bottom:-4px; height:4px; width:100%; background:linear-gradient(90deg,transparent,var(--orange),transparent); transform:scaleX(0); transform-origin:left; animation:underSweep 1s ease 1.5s forwards; border-radius:4px; }
+@keyframes underSweep{ to{ transform:scaleX(1); } }
+.hero p.sub{ font-size:clamp(1rem,1.5vw,1.12rem); color:var(--muted); max-width:460px; line-height:1.7; margin-bottom:32px; animation:fadeUp .8s ease .9s both; }
+.cta-row{ display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp .8s ease 1.05s both; }
+.btn{ padding:14px 26px; border-radius:12px; font-weight:700; font-size:.92rem; text-decoration:none; transition:all .25s; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; }
+.btn-primary{ background:linear-gradient(90deg,#ff6b1a,#ff8c42); color:#0a0a0a; box-shadow:0 6px 26px rgba(255,107,26,.35); position:relative; overflow:hidden; }
+.btn-primary::after{ content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); animation:btnShine 3.5s ease-in-out infinite; }
+@keyframes btnShine{ 0%{left:-100%} 50%,100%{left:160%} }
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 10px 34px rgba(255,107,26,.6); }
+.btn-ghost{ background:rgba(255,255,255,.03); color:var(--text); border:1px solid rgba(255,107,26,.3); }
+.btn-ghost:hover{ background:rgba(255,107,26,.08); border-color:var(--orange); transform:translateY(-3px); }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:translateY(0)} }
+
+/* RADAR */
+.hero-right{ position:relative; display:flex; align-items:center; justify-content:center; gap:18px; animation:fadeIn 1.4s ease .3s both; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.radar-box{ position:relative; width:440px; height:440px; }
+.radar-rings{ position:absolute; inset:0; border-radius:50%; }
+.ring{ position:absolute; border-radius:50%; border:1px solid rgba(255,107,26,.18); top:50%; left:50%; transform:translate(-50%,-50%); }
+.ring.r1{ width:100%; height:100%; }
+.ring.r2{ width:74%; height:74%; }
+.ring.r3{ width:48%; height:48%; }
+.ring.cross-h{ width:100%; height:0; border:none; border-top:1px solid rgba(255,107,26,.12); }
+.ring.cross-v{ width:0; height:100%; border:none; border-left:1px solid rgba(255,107,26,.12); }
+.radar-glow{ position:absolute; inset:-30px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.14), transparent 60%); animation:glowP 4s ease-in-out infinite; }
+@keyframes glowP{ 0%,100%{opacity:.6} 50%{opacity:1} }
+.sweep{ position:absolute; inset:0; border-radius:50%; overflow:hidden; }
+.sweep::before{ content:''; position:absolute; top:50%; left:50%; width:50%; height:50%; transform-origin:top left; background:conic-gradient(from 0deg, rgba(255,140,66,.45), rgba(255,107,26,.08) 30%, transparent 45%); animation:radarSpin 3.5s linear infinite; }
+@keyframes radarSpin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.core{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:120px; height:120px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.2), rgba(10,7,5,.9)); border:1.5px solid rgba(255,107,26,.5); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; box-shadow:0 0 40px rgba(255,107,26,.3); z-index:4; }
+.core .ct{ font-family:'Space Grotesk'; font-weight:700; font-size:.95rem; letter-spacing:1px; line-height:1.2; }
+.blip{ position:absolute; width:9px; height:9px; border-radius:50%; z-index:3; animation:blipPulse 2s ease-in-out infinite; }
+.blip.high{ background:#ff3b3b; box-shadow:0 0 12px #ff3b3b; }
+.blip.med{ background:#facc15; box-shadow:0 0 12px #facc15; }
+.blip.low{ background:#22c55e; box-shadow:0 0 12px #22c55e; }
+@keyframes blipPulse{ 0%,100%{transform:scale(.7);opacity:.5} 50%{transform:scale(1.3);opacity:1} }
+
+.legend{ display:flex; flex-direction:column; gap:14px; }
+.legend .li{ display:flex; align-items:center; gap:9px; font-size:.82rem; color:#cfc9c4; }
+.legend .dot{ width:10px; height:10px; border-radius:50%; }
+.legend .dot.high{ background:#ff3b3b; box-shadow:0 0 8px #ff3b3b; }
+.legend .dot.med{ background:#facc15; box-shadow:0 0 8px #facc15; }
+.legend .dot.low{ background:#22c55e; box-shadow:0 0 8px #22c55e; }
+
+/* LIVE SCAN feed */
+.livescan{ margin-top:26px; width:300px; background:rgba(16,13,11,.7); border:1px solid rgba(255,107,26,.18); border-radius:14px; padding:14px 16px; backdrop-filter:blur(8px); }
+.livescan .ls-head{ display:flex; align-items:center; gap:8px; font-size:.7rem; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
+.livescan .ls-head .rec{ width:7px; height:7px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 8px #ff3b3b; animation:pulse 1.2s infinite; }
+.ls-line{ font-family:'JetBrains Mono'; font-size:.76rem; padding:5px 0; display:flex; align-items:center; gap:9px; opacity:0; transform:translateY(8px); }
+.ls-line.in{ animation:lineIn .5s ease forwards; }
+@keyframes lineIn{ to{opacity:1; transform:translateY(0);} }
+.ls-line .tid{ color:#cfc9c4; }
+.ls-line .tag{ margin-left:auto; font-size:.7rem; font-weight:600; }
+.tag.high{ color:#f87171; } .tag.med{ color:#facc15; } .tag.low{ color:#4ade80; }
+
+/* STATS */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; max-width:1340px; margin:0 auto; padding:10px 46px 90px; }
+.stat{ padding:6px 26px; border-left:1px solid rgba(255,107,26,.15); }
+.stat:first-child{ border-left:none; padding-left:0; }
+.stat .num{ font-family:'Space Grotesk'; font-size:2.1rem; font-weight:700; color:var(--orange-bright); }
+.stat .lbl{ font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+/* ===== CONTENT SECTIONS ===== */
+.wrap{ max-width:1200px; margin:0 auto; padding:20px 46px 90px; }
+.blocktitle{ font-family:'Space Grotesk'; font-size:1.7rem; font-weight:700; margin-bottom:8px; }
+.blocksub{ color:var(--muted); margin-bottom:34px; line-height:1.6; max-width:640px; }
+.challenge{ display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; margin-bottom:70px; }
+.challenge h3{ font-family:'Space Grotesk'; font-size:1.4rem; margin-bottom:12px; }
+.challenge p{ color:var(--muted); line-height:1.7; font-size:.96rem; }
+.imbalance-bar{ height:60px; border-radius:14px; overflow:hidden; display:flex; border:1px solid rgba(255,107,26,.2); }
+.ib-normal{ background:linear-gradient(90deg,#1a1512,#241a12); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:700; color:var(--muted); font-size:.88rem; width:98.9%; }
+.ib-fraud{ background:linear-gradient(90deg,#ff6b1a,#ff3b3b); display:flex; align-items:center; justify-content:center; font-weight:700; color:#0a0a0a; font-size:.72rem; width:1.1%; box-shadow:0 0 22px rgba(255,59,59,.6); white-space:nowrap; }
+.trap{ background:linear-gradient(135deg, rgba(239,68,68,.08), rgba(255,107,26,.05)); border:1px solid rgba(239,68,68,.3); border-radius:18px; padding:28px 32px; margin-bottom:70px; display:flex; gap:20px; align-items:flex-start; }
+.trap .ic{ font-size:1.9rem; }
+.trap h4{ font-family:'Space Grotesk'; font-size:1.2rem; margin-bottom:8px; color:#f87171; }
+.trap p{ color:var(--muted); line-height:1.7; }
+.trap code{ font-family:'JetBrains Mono'; background:rgba(255,107,26,.12); color:var(--orange-bright); padding:2px 8px; border-radius:5px; font-size:.9em; }
+.metricsg{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:16px; }
+.metric{ padding:24px; border-radius:16px; background:linear-gradient(160deg, rgba(255,107,26,.07), rgba(16,14,12,.75)); border:1px solid rgba(255,107,26,.16); transition:all .3s; }
+.metric:hover{ transform:translateY(-6px); border-color:var(--orange); box-shadow:0 12px 34px rgba(255,107,26,.25); }
+.metric .mv{ font-family:'Space Grotesk'; font-size:2rem; font-weight:700; color:var(--orange-bright); }
+.metric .ml{ font-size:.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+.metric .mnote{ font-size:.7rem; color:#6a6a6a; margin-top:8px; }
+.journey{ display:flex; align-items:stretch; margin:40px 0 70px; flex-wrap:wrap; }
+.jstep{ flex:1; min-width:180px; padding:22px; border-radius:14px; background:rgba(18,15,13,.6); border:1px solid rgba(255,107,26,.14); margin:6px; position:relative; transition:all .3s; }
+.jstep:hover{ border-color:rgba(255,107,26,.4); transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,.4); }
+.jstep.best{ border-color:var(--orange); background:linear-gradient(160deg, rgba(255,107,26,.1), rgba(16,14,12,.7)); box-shadow:0 0 24px rgba(255,107,26,.15); }
+.jstep .jn{ font-family:'JetBrains Mono'; font-size:.7rem; color:var(--orange); letter-spacing:1px; }
+.jstep h5{ font-family:'Space Grotesk'; font-size:1.02rem; margin:8px 0 6px; }
+.jstep p{ font-size:.8rem; color:var(--muted); line-height:1.5; }
+.jstep .badge-best{ position:absolute; top:-10px; right:12px; background:var(--orange); color:#0a0a0a; font-size:.6rem; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:.5px; }
+.fchart{ background:rgba(14,12,10,.6); border:1px solid rgba(255,107,26,.15); border-radius:18px; padding:32px; margin-bottom:70px; }
+.frow{ display:flex; align-items:center; gap:16px; margin-bottom:15px; }
+.frow .fname{ width:190px; font-size:.84rem; font-family:'JetBrains Mono'; color:#cfc9c4; text-align:right; }
+.fbar-wrap{ flex:1; height:24px; background:rgba(255,255,255,.03); border-radius:8px; overflow:hidden; }
+.fbar{ height:100%; border-radius:8px; background:linear-gradient(90deg,#7a2e00,#ff6b1a,#ff8c42); width:0; transition:width 1.3s cubic-bezier(.2,.7,.3,1); display:flex; align-items:center; justify-content:flex-end; padding-right:10px; font-size:.72rem; font-weight:600; color:#0a0a0a; }
+.honesty{ background:linear-gradient(135deg, rgba(255,107,26,.1), rgba(255,140,66,.04)); border:1px solid rgba(255,107,26,.3); border-radius:20px; padding:38px; position:relative; overflow:hidden; }
+.honesty::before{ content:''; position:absolute; top:-50%; right:-10%; width:50%; height:200%; background:radial-gradient(circle, rgba(255,107,26,.12), transparent 60%); animation:sweep2 7s ease-in-out infinite; }
+@keyframes sweep2{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(-120%)} }
+.honesty .htag{ font-family:'JetBrains Mono'; font-size:.7rem; color:var(--orange); letter-spacing:2px; margin-bottom:12px; }
+.honesty h3{ font-family:'Space Grotesk'; font-size:1.5rem; margin-bottom:14px; position:relative; }
+.honesty p{ color:#cfc9c4; line-height:1.8; max-width:760px; position:relative; }
+.honesty code{ font-family:'JetBrains Mono'; background:rgba(0,0,0,.3); color:var(--orange-bright); padding:2px 8px; border-radius:5px; }
+
+.reveal{ opacity:0; transform:translateY(40px); transition:all .7s ease; }
+.reveal.show{ opacity:1; transform:translateY(0); }
+@media(max-width:940px){ .hero{ grid-template-columns:1fr; text-align:center; padding-top:110px; } .hero-right{ flex-direction:column; order:-1; } .radar-box{ width:320px; height:320px; } .cta-row{ justify-content:center; } .stats{ grid-template-columns:repeat(2,1fr); gap:18px; } .stat{ border-left:none; padding-left:0; } .navlinks a:not(.nav-cta){ display:none; } nav{ padding:14px 20px; } }
+
+/* ===== REAL APPLICATION ANALYZER ===== */
+.analyzer{max-width:1200px;margin:0 auto 80px;padding:0 46px;}
+.analyzer-card{background:linear-gradient(160deg,rgba(255,107,26,.08),rgba(16,14,12,.82));border:1px solid rgba(255,107,26,.22);border-radius:24px;padding:34px;box-shadow:0 20px 60px rgba(0,0,0,.28);}
+.analyzer-head{display:flex;justify-content:space-between;gap:25px;align-items:flex-end;margin-bottom:28px;}
+.analyzer-head h2{font-family:'Space Grotesk';font-size:2rem;margin-bottom:8px;}
+.analyzer-head p{color:var(--muted);line-height:1.6;max-width:700px;}
+.api-state{font-family:'JetBrains Mono';font-size:.7rem;padding:7px 11px;border:1px solid rgba(255,107,26,.25);border-radius:20px;color:var(--orange-bright);white-space:nowrap;}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:25px;}
+.field{display:flex;flex-direction:column;gap:7px;}
+.field label{font-size:.72rem;color:#cfc9c4;font-family:'JetBrains Mono';letter-spacing:.2px;}
+.field input,.field select{width:100%;padding:12px 13px;border-radius:10px;border:1px solid rgba(255,107,26,.18);background:#100d0b;color:#f5f5f5;outline:none;font:500 .88rem Inter,sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,26,.08);}
+.form-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.form-note{font-size:.72rem;color:#777;line-height:1.5;}
+.result{display:none;margin-top:28px;border-top:1px solid rgba(255,107,26,.14);padding-top:28px;}
+.result.show{display:block;}
+.result-grid{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:center;}
+.risk-gauge{width:190px;height:190px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--orange) 0deg,var(--orange) 0deg,rgba(255,255,255,.06) 0deg);position:relative;}
+.risk-gauge::before{content:'';position:absolute;inset:13px;border-radius:50%;background:#0d0a08;}
+.risk-gauge .gtext{position:relative;text-align:center;z-index:1;}
+.gscore{font:700 2.6rem 'Space Grotesk';}
+.glabel{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.result h3{font-family:'Space Grotesk';font-size:1.5rem;margin-bottom:8px;}
+.result p{color:var(--muted);line-height:1.65;}
+.result-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.meta-pill{padding:7px 11px;border-radius:20px;background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.18);font:600 .7rem 'JetBrains Mono';color:#ddd;}
+.error{color:#f87171!important;margin-top:14px;display:none;}
+@media(max-width:900px){.form-grid{grid-template-columns:repeat(2,1fr)}.result-grid{grid-template-columns:1fr}.risk-gauge{margin:auto}}
+@media(max-width:600px){.analyzer{padding:0 20px}.analyzer-card{padding:22px}.form-grid{grid-template-columns:1fr}.analyzer-head{display:block}.api-state{display:inline-block;margin-top:15px}}
+
+</style>
+</head>
+<body>
+<div class="bg-particles" id="bgp"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+<nav>
+  <div class="logo"><span class="mark"></span> FraudGuard AI</div>
+  <div class="navlinks"><a href="index.html">Home</a><a href="detect.html" class="active">Detect</a><a href="investigate.html">Investigate</a><a href="ask.html">Ask</a><a href="about.html">About</a><a href="detect.html" class="nav-cta">Get Started</a></div>
+</nav>
+
+<header class="hero">
+  <div class="hero-left">
+    <div class="badge-top"><span class="live"></span> DETECT &#183; AI POWERED &#183; RISK SCORING</div>
+    <h1>
+      <span class="word" style="animation-delay:.1s">Detect</span>
+      <span class="word" style="animation-delay:.22s">suspicious</span>
+      <span class="word" style="animation-delay:.34s">transactions</span>
+      <span class="word" style="animation-delay:.46s">before</span>
+      <span class="word" style="animation-delay:.58s">they</span>
+      <span class="word" style="animation-delay:.70s">become</span>
+      <span class="word" style="animation-delay:.82s"><span class="grad">real losses.</span></span>
+    </h1>
+    <p class="sub">Enter a bank-account application and run the same 46-feature ML pipeline used in the Phase-1 notebook.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="investigate.html">Try a Transaction &#8594;</a>
+      <a class="btn btn-ghost" href="investigate.html">See How It Works</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="radar-box">
+      <div class="radar-glow"></div>
+      <div class="radar-rings">
+        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+        <div class="ring cross-h"></div><div class="ring cross-v"></div>
+      </div>
+      <div class="sweep"></div>
+      <div class="core"><div class="ct">RISK<br>ENGINE</div></div>
+      <span class="blip high" style="top:18%; left:60%; animation-delay:0s"></span>
+      <span class="blip low" style="top:30%; left:32%; animation-delay:.4s"></span>
+      <span class="blip med" style="top:62%; left:70%; animation-delay:.8s"></span>
+      <span class="blip low" style="top:70%; left:40%; animation-delay:1.2s"></span>
+      <span class="blip high" style="top:44%; left:78%; animation-delay:1.6s"></span>
+      <span class="blip med" style="top:25%; left:52%; animation-delay:2s"></span>
+      <span class="blip low" style="top:78%; left:58%; animation-delay:2.4s"></span>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:22px">
+      <div class="legend">
+        <div class="li"><span class="dot high"></span> High Risk</div>
+        <div class="li"><span class="dot med"></span> Medium Risk</div>
+        <div class="li"><span class="dot low"></span> Low Risk</div>
+      </div>
+      <div class="livescan">
+        <div class="ls-head"><span class="rec"></span> Live Scan</div>
+        <div id="lsBody"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<section class="analyzer" id="application-form">
+  <div class="analyzer-card">
+    <div class="analyzer-head">
+      <div>
+        <div class="badge-top" style="margin-bottom:12px">LIVE APPLICATION ANALYZER</div>
+        <h2>Analyze a bank-account application</h2>
+        <p>This form exposes the raw application signals used by the Phase-1 model. Submit it to the local FastAPI backend to get a model probability and the project's 0–100 risk score.</p>
+      </div>
+      <div class="api-state" id="apiState">API: CHECKING…</div>
+    </div>
+
+    <form id="fraudForm">
+      <div class="form-grid">
+        <div class="field"><label>Income</label><input name="income" type="number" step="any" value="0.5" required></div>
+        <div class="field"><label>Name–Email Similarity</label><input name="name_email_similarity" type="number" min="0" max="1" step="any" value="0.5" required></div>
+        <div class="field"><label>Previous Address (months)</label><input name="prev_address_months_count" type="number" value="12" required></div>
+        <div class="field"><label>Current Address (months)</label><input name="current_address_months_count" type="number" value="24" required></div>
+        <div class="field"><label>Customer Age</label><input name="customer_age" type="number" value="30" required></div>
+        <div class="field"><label>Days Since Request</label><input name="days_since_request" type="number" step="any" value="1" required></div>
+        <div class="field"><label>Intended Balance Amount</label><input name="intended_balcon_amount" type="number" step="any" value="0" required></div>
+        <div class="field"><label>Payment Type</label><select name="payment_type"><option>AA</option><option>AB</option><option>AC</option><option>AD</option><option>AE</option></select></div>
+        <div class="field"><label>ZIP Count (4 weeks)</label><input name="zip_count_4w" type="number" value="1" required></div>
+        <div class="field"><label>Velocity (6h)</label><input name="velocity_6h" type="number" step="any" value="1" required></div>
+        <div class="field"><label>Velocity (24h)</label><input name="velocity_24h" type="number" step="any" value="1" required></div>
+        <div class="field"><label>Velocity (4 weeks)</label><input name="velocity_4w" type="number" step="any" value="1" required></div>
+        <div class="field"><label>Bank Branch Count (8 weeks)</label><input name="bank_branch_count_8w" type="number" value="1" required></div>
+        <div class="field"><label>DOB Distinct Emails (4 weeks)</label><input name="date_of_birth_distinct_emails_4w" type="number" value="1" required></div>
+        <div class="field"><label>Employment Status</label><select name="employment_status"><option>CA</option><option>CB</option><option>CC</option><option>CD</option><option>CE</option><option>CF</option><option>CG</option></select></div>
+        <div class="field"><label>Credit Risk Score</label><input name="credit_risk_score" type="number" value="122" required></div>
+        <div class="field"><label>Free Email</label><select name="email_is_free"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Housing Status</label><select name="housing_status"><option>BA</option><option>BB</option><option>BC</option><option>BD</option><option>BE</option><option>BF</option><option>BG</option></select></div>
+        <div class="field"><label>Home Phone Valid</label><select name="phone_home_valid"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Mobile Phone Valid</label><select name="phone_mobile_valid"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Bank Months Count</label><input name="bank_months_count" type="number" value="12" required></div>
+        <div class="field"><label>Has Other Cards</label><select name="has_other_cards"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Proposed Credit Limit</label><input name="proposed_credit_limit" type="number" step="any" value="2000" required></div>
+        <div class="field"><label>Foreign Request</label><select name="foreign_request"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Source</label><select name="source"><option>INTERNET</option><option>TELEAPP</option></select></div>
+        <div class="field"><label>Session Length (minutes)</label><input name="session_length_in_minutes" type="number" step="any" value="5" required></div>
+        <div class="field"><label>Device OS</label><select name="device_os"><option>linux</option><option>windows</option><option>macintosh</option><option>x11</option><option>other</option></select></div>
+        <div class="field"><label>Keep Alive Session</label><select name="keep_alive_session"><option value="0">No</option><option value="1">Yes</option></select></div>
+        <div class="field"><label>Device Distinct Emails (8 weeks)</label><input name="device_distinct_emails_8w" type="number" value="1" required></div>
+        <div class="field"><label>Month</label><input name="month" type="number" min="0" max="12" value="6" required></div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Run Fraud Analysis →</button>
+        <button class="btn btn-ghost" type="reset" id="resetForm">Reset</button>
+        <div class="form-note">`fraud_bool` is the target and is never collected from the user.</div>
+      </div>
+      <p class="error" id="formError"></p>
+    </form>
+
+    <div class="result" id="predictionResult">
+      <div class="result-grid">
+        <div class="risk-gauge" id="riskGauge">
+          <div class="gtext"><div class="gscore" id="riskScore">—</div><div class="glabel">Risk Score / 100</div></div>
+        </div>
+        <div>
+          <h3 id="riskTitle">Waiting for prediction</h3>
+          <p id="riskDescription">Submit the application to receive the model probability and risk category.</p>
+          <div class="result-meta">
+            <div class="meta-pill" id="probabilityPill">FRAUD PROBABILITY: —</div>
+            <div class="meta-pill" id="modelPill">MODEL: RF + SMOTE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="num" data-target="100" data-suffix="+">0</div><div class="lbl">Transaction Types</div></div>
+  <div class="stat"><div class="num" data-target="46">0</div><div class="lbl">Risk Features</div></div>
+  <div class="stat"><div class="num" data-target="79" data-suffix="%">0</div><div class="lbl">Recall (Fraud Caught)</div></div>
+  <div class="stat"><div class="num" data-target="10" data-suffix="x">0</div><div class="lbl">Faster Detection</div></div>
+</div>
+
+
+<div class="wrap">
+  <!-- CHALLENGE -->
+  <div class="challenge reveal">
+    <div>
+      <h3>The core challenge: severe imbalance</h3>
+      <p>Out of 200,000 applications, only about 2,200 are fraudulent. A model can score 99% accuracy by simply calling everything &#8220;safe&#8221; &#8212; and catch zero fraud. The real task is finding the needles without burying reviewers in false alarms.</p>
+    </div>
+    <div>
+      <div class="imbalance-bar"><div class="ib-normal">98.9% Legitimate</div><div class="ib-fraud">1.1%</div></div>
+      <div style="text-align:center; margin-top:12px; font-size:.78rem; color:#6a6a6a; font-family:'JetBrains Mono'">200,000 applications &#183; ~2,200 frauds</div>
+    </div>
+  </div>
+
+  <!-- ACCURACY TRAP -->
+  <div class="trap reveal">
+    <div class="ic">&#9888;&#65039;</div>
+    <div>
+      <h4>The accuracy trap</h4>
+      <p>A model that predicts <code>&#34;not fraud&#34;</code> for every application still scores <code>99% accuracy</code> &#8212; while catching <b>nothing</b>. That&#8217;s why this project is judged on <b>recall, precision and F1</b>, not accuracy.</p>
+    </div>
+  </div>
+
+  <!-- HONEST PERFORMANCE -->
+  <div class="reveal">
+    <div class="blocktitle">Honest performance</div>
+    <div class="blocksub">Reported on the held-out test set &#8212; the numbers as they actually are, with a recall-focused lens.</div>
+    <div class="metricsg">
+      <div class="metric"><div class="mv" data-target="79" data-suffix="%">0</div><div class="ml">Recall (LogReg)</div><div class="mnote">of real fraud caught</div></div>
+      <div class="metric"><div class="mv" data-target="46">0</div><div class="ml">Risk Features</div><div class="mnote">signals per application</div></div>
+      <div class="metric"><div class="mv" data-target="200" data-suffix="K">0</div><div class="ml">Applications</div><div class="mnote">Bank Account Fraud</div></div>
+      <div class="metric"><div class="mv" data-target="4">0</div><div class="ml">Models Compared</div><div class="mnote">LogReg &#8594; RF &#8594; SMOTE</div></div>
+    </div>
+    <div style="font-size:.8rem;color:#6a6a6a;line-height:1.6;margin-bottom:60px">Recall-focused: catching more fraud means accepting more false alarms &#8212; a trade-off tuned deliberately, not hidden.</div>
+  </div>
+
+  <!-- MODEL JOURNEY -->
+  <div class="reveal">
+    <div class="blocktitle">The model journey</div>
+    <div class="blocksub">Not one model &#8212; an honest comparison of several, each revealing something about the problem.</div>
+    <div class="journey">
+      <div class="jstep"><div class="jn">01</div><h5>Logistic Regression</h5><p>Baseline. Class-weighted &#8212; reached 79% recall, exposing the precision trade-off early.</p></div>
+      <div class="jstep"><div class="jn">02</div><h5>Random Forest</h5><p>Strong on tabular data, but default threshold missed almost all fraud under imbalance.</p></div>
+      <div class="jstep"><div class="jn">03</div><h5>RF + class weights</h5><p>Balanced subsample nudged recall up; still threshold-sensitive.</p></div>
+      <div class="jstep best"><div class="badge-best">FINAL</div><div class="jn">04</div><h5>RF + SMOTE</h5><p>Synthetic oversampling for a fairer boundary &#8212; the deployed model.</p></div>
+    </div>
+  </div>
+
+  <!-- FEATURE IMPORTANCE -->
+  <div class="reveal">
+    <div class="blocktitle">What drives a fraud flag</div>
+    <div class="blocksub">Top contributing features from the model &#8212; each maps to a real fraud-policy document.</div>
+    <div class="fchart">
+      <div class="frow"><div class="fname">customer_age</div><div class="fbar-wrap"><div class="fbar" data-w="100">0.114</div></div></div>
+      <div class="frow"><div class="fname">device_os_windows</div><div class="fbar-wrap"><div class="fbar" data-w="75">0.085</div></div></div>
+      <div class="frow"><div class="fname">keep_alive_session</div><div class="fbar-wrap"><div class="fbar" data-w="66">0.075</div></div></div>
+      <div class="frow"><div class="fname">income</div><div class="fbar-wrap"><div class="fbar" data-w="56">0.063</div></div></div>
+      <div class="frow"><div class="fname">phone_home_valid</div><div class="fbar-wrap"><div class="fbar" data-w="55">0.062</div></div></div>
+      <div class="frow"><div class="fname">current_address_months</div><div class="fbar-wrap"><div class="fbar" data-w="48">0.054</div></div></div>
+    </div>
+  </div>
+
+  <!-- HONESTY -->
+  <div class="honesty reveal">
+    <div class="htag">ENGINEERING INTEGRITY</div>
+    <h3>The 0.94 F1 that wasn&#8217;t real.</h3>
+    <p>An early grid-search reported a stunning <code>0.945 F1</code> &#8212; far too good for a 1% fraud rate. On inspection it came from <b>data leakage</b>: oversampling before the train/test split let the model peek at test data. Caught, corrected, and re-evaluated honestly. A number that survives scrutiny beats a beautiful one that doesn&#8217;t.</p>
+  </div>
+</div>
+
+<script>
+document.addEventListener('mousemove', function(e){ document.getElementById('glow').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)'; document.getElementById('glow2').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)'; });
+var bgp=document.getElementById('bgp');
+for(var i=0;i<24;i++){ var s=document.createElement('i'); s.style.left=(Math.random()*100)+'%'; s.style.animationDuration=(8+Math.random()*10)+'s'; s.style.animationDelay=(Math.random()*10)+'s'; var sc=.5+Math.random()*1.5; s.style.width=(2*sc)+'px'; s.style.height=(2*sc)+'px'; bgp.appendChild(s); }
+var feed=[ ['TXN-7842','High Risk','high'],['TXN-9015','Low Risk','low'],['TXN-6381','Medium Risk','med'],['TXN-4590','Low Risk','low'],['TXN-7821','High Risk','high'],['TXN-3346','Medium Risk','med'],['TXN-5502','Low Risk','low'],['TXN-8890','High Risk','high'] ];
+var lsBody=document.getElementById('lsBody'); var fi=0;
+function pushLine(){ var d=feed[fi%feed.length]; fi++; var row=document.createElement('div'); row.className='ls-line in'; row.innerHTML='<span class="tid">'+d[0]+'</span><span class="tag '+d[2]+'">'+d[1]+'</span>'; lsBody.prepend(row); while(lsBody.children.length>5) lsBody.removeChild(lsBody.lastChild); }
+pushLine();pushLine();pushLine();pushLine(); setInterval(pushLine, 1700);
+
+function countUp(el){ if(el.dataset.decimal){var t=+el.dataset.decimal,c=0,s=t/50;var tick=function(){c+=s;if(c<t){el.textContent=c.toFixed(2);requestAnimationFrame(tick);}else el.textContent=t.toFixed(2);};tick();return;} var t=+el.dataset.target,suf=el.dataset.suffix||'',c=0,s=t/50;var tick=function(){c+=s;if(c<t){el.textContent=Math.floor(c)+suf;requestAnimationFrame(tick);}else el.textContent=t+suf;};tick(); }
+var counted=false;
+new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!counted){counted=true;document.querySelectorAll('.stats .num').forEach(countUp);}});},{threshold:.4}).observe(document.querySelector('.stats'));
+var mObs=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ e.target.querySelectorAll('.mv').forEach(function(el){ if(!el.classList.contains('cd')){el.classList.add('cd');countUp(el);} }); mObs.unobserve(e.target);} });},{threshold:.4});
+document.querySelectorAll('.metricsg').forEach(function(el){mObs.observe(el);});
+var fObs=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ e.target.querySelectorAll('.fbar').forEach(function(b){ b.style.width=b.dataset.w+'%'; }); fObs.unobserve(e.target);} });},{threshold:.3});
+document.querySelectorAll('.fchart').forEach(function(el){fObs.observe(el);});
+var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('show');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
+
+
+/* ===== REAL MODEL API ===== */
+const API_BASE = 'http://127.0.0.1:8000';
+const fraudForm = document.getElementById('fraudForm');
+const apiState = document.getElementById('apiState');
+const predictionResult = document.getElementById('predictionResult');
+const formError = document.getElementById('formError');
+const riskGauge = document.getElementById('riskGauge');
+
+async function checkApi(){
+  try{
+    const r = await fetch(API_BASE + '/api/health');
+    if(!r.ok) throw new Error();
+    apiState.textContent='API: ONLINE';
+  }catch(e){
+    apiState.textContent='API: OFFLINE — start backend';
+  }
+}
+checkApi();
+
+fraudForm.addEventListener('submit', async function(e){
+  e.preventDefault();
+  formError.style.display='none';
+  const data = Object.fromEntries(new FormData(fraudForm).entries());
+
+  // Convert numeric fields to numbers; categorical/select values remain strings.
+  const numeric = ['income','name_email_similarity','prev_address_months_count','current_address_months_count','customer_age','days_since_request','intended_balcon_amount','zip_count_4w','velocity_6h','velocity_24h','velocity_4w','bank_branch_count_8w','date_of_birth_distinct_emails_4w','credit_risk_score','email_is_free','phone_home_valid','phone_mobile_valid','bank_months_count','has_other_cards','proposed_credit_limit','foreign_request','session_length_in_minutes','keep_alive_session','device_distinct_emails_8w','month'];
+  numeric.forEach(k => data[k] = Number(data[k]));
+
+  try{
+    const response = await fetch(API_BASE + '/api/predict', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    });
+    const payload = await response.json();
+    if(!response.ok) throw new Error(payload.detail || 'Prediction failed.');
+
+    const score = Number(payload.risk_score);
+    const prob = Number(payload.fraud_probability);
+    const category = payload.risk_category;
+    const color = category === 'HIGH' ? '#ff3b3b' : category === 'MEDIUM' ? '#facc15' : '#22c55e';
+
+    predictionResult.classList.add('show');
+    document.getElementById('riskScore').textContent = score.toFixed(1);
+    document.getElementById('riskTitle').textContent = category + ' RISK';
+    document.getElementById('riskTitle').style.color = color;
+    document.getElementById('riskDescription').textContent =
+      'The trained Random Forest + SMOTE pipeline returned a fraud probability of ' +
+      prob.toFixed(4) + '. The project risk score is probability × 100.';
+    document.getElementById('probabilityPill').textContent = 'FRAUD PROBABILITY: ' + prob.toFixed(4);
+    riskGauge.style.background = 'conic-gradient(' + color + ' ' + (score * 3.6) + 'deg, rgba(255,255,255,.06) 0deg)';
+    predictionResult.scrollIntoView({behavior:'smooth', block:'center'});
+  }catch(err){
+    formError.textContent = err.message + ' Make sure the backend is running on port 8000.';
+    formError.style.display='block';
+  }
+});
+
+</script>
+</body>
+</html>

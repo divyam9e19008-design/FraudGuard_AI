@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FraudGuard AI — Ask</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{ --orange:#ff6b1a; --orange-bright:#ff8c42; --orange-glow:rgba(255,107,26,.5); --bg:#080706; --text:#f5f5f5; --muted:#9a9a9a; --bm25:#a8632c; --mini:#ffc08a; }
+html{ scroll-behavior:smooth; }
+body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body::before{ content:''; position:fixed; inset:0; z-index:-3; pointer-events:none; background:radial-gradient(800px 600px at 78% 45%, rgba(255,107,26,.14), transparent 60%), radial-gradient(600px 500px at 10% -5%, rgba(255,107,26,.08), transparent 55%); }
+body::after{ content:''; position:fixed; inset:0; z-index:-2; pointer-events:none; background-image:linear-gradient(rgba(255,107,26,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,26,.02) 1px, transparent 1px); background-size:60px 60px; -webkit-mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); }
+.bg-particles{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.bg-particles i{ position:absolute; width:2px; height:2px; border-radius:50%; background:rgba(255,140,66,.5); animation:drift linear infinite; }
+@keyframes drift{ 0%{ transform:translateY(100vh) scale(0); opacity:0; } 10%{opacity:.7;} 90%{opacity:.7;} 100%{ transform:translateY(-10vh) scale(1); opacity:0; } }
+#glow{ position:fixed; width:210px; height:210px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.13), transparent 62%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .16s cubic-bezier(.22,.61,.36,1); mix-blend-mode:screen; }
+@keyframes markPulse{ 0%,100%{box-shadow:0 0 14px var(--orange-glow)} 50%{box-shadow:0 0 24px rgba(255,140,66,.8)} }
+#glow2{ position:fixed; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,80,.25), transparent 60%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .06s linear; mix-blend-mode:screen; }
+nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 46px; background:rgba(8,7,6,.5); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,107,26,.1); }
+.logo{ display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; }
+.logo .mark{ width:30px; height:30px; min-width:30px; border-radius:50%; background:linear-gradient(135deg,#ff6b1a,#ff8c42); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px var(--orange-glow); animation:markPulse 3s ease-in-out infinite; }
+.logo .mark::after{ content:''; width:11px; height:11px; background:#080706; border-radius:50%; }
+.navlinks{ display:flex; gap:4px; align-items:center; }
+.navlinks a{ color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:500; padding:8px 15px; border-radius:8px; transition:all .2s; }
+.navlinks a:hover{ color:var(--orange-bright); }
+.navlinks a.active{ color:#fff; }
+.navlinks a.active::after{ content:''; display:block; height:2px; width:60%; margin:3px auto 0; background:var(--orange); border-radius:2px; box-shadow:0 0 8px var(--orange-glow); }
+.nav-cta{ padding:9px 22px !important; border:1px solid var(--orange); border-radius:9px; color:var(--orange-bright) !important; font-weight:600; }
+.nav-cta:hover{ background:rgba(255,107,26,.1); box-shadow:0 0 20px rgba(255,107,26,.3); }
+
+.hero{ min-height:100vh; display:grid; grid-template-columns:1.02fr .98fr; align-items:center; gap:20px; padding:120px 46px 50px; max-width:1320px; margin:0 auto; position:relative; }
+.hero-left{ z-index:5; }
+.badge-top{ display:inline-flex; align-items:center; gap:9px; padding:7px 17px; border-radius:30px; margin-bottom:26px; background:rgba(255,107,26,.07); border:1px solid rgba(255,107,26,.22); font-size:.82rem; color:#cfc9c4; font-weight:500; animation:fadeUp .8s ease both; }
+.badge-top .live{ width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 10px #22c55e; animation:pulse 1.6s infinite; }
+@keyframes pulse{ 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.55} }
+.hero h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(2.6rem,5.6vw,4.6rem); font-weight:700; line-height:1.03; letter-spacing:-2px; margin-bottom:22px; }
+.hero h1 .word{ display:inline-block; opacity:0; transform:translateY(30px) rotateX(-40deg); animation:wordIn .7s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes wordIn{ to{ opacity:1; transform:translateY(0) rotateX(0); } }
+.hero h1 .grad{ background:linear-gradient(100deg,#ff6b1a,#ff8c42,#ffd9a0,#ff8c42,#ff6b1a); background-size:250% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s linear infinite; cursor:pointer; transition:filter .3s; position:relative; }
+@keyframes shimmer{ to{ background-position:250% center; } }
+.hero h1 .grad:hover{ filter:drop-shadow(0 0 22px rgba(255,140,66,.6)) brightness(1.15); }
+.hero h1 .grad::after{ content:''; position:absolute; left:0; bottom:-6px; height:4px; width:100%; background:linear-gradient(90deg,transparent,var(--orange),transparent); transform:scaleX(0); transform-origin:left; animation:underSweep 1s ease 1.4s forwards; border-radius:4px; }
+@keyframes underSweep{ to{ transform:scaleX(1); } }
+.hero p.sub{ font-size:clamp(1rem,1.6vw,1.18rem); color:var(--muted); max-width:520px; line-height:1.65; margin-bottom:36px; animation:fadeUp .8s ease .9s both; }
+.cta-row{ display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp .8s ease 1.05s both; }
+.btn{ padding:14px 28px; border-radius:12px; font-weight:700; font-size:.94rem; text-decoration:none; transition:all .25s; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; }
+.btn-primary{ background:linear-gradient(90deg,#ff6b1a,#ff8c42); color:#0a0a0a; box-shadow:0 6px 26px rgba(255,107,26,.35); position:relative; overflow:hidden; }
+.btn-primary::after{ content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); animation:btnShine 3.5s ease-in-out infinite; }
+@keyframes btnShine{ 0%{left:-100%} 50%,100%{left:160%} }
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 10px 34px rgba(255,107,26,.6); }
+.btn-ghost{ background:transparent; color:var(--text); border:1px solid rgba(255,107,26,.3); }
+.btn-ghost:hover{ background:rgba(255,107,26,.08); border-color:var(--orange); transform:translateY(-3px); }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:translateY(0)} }
+
+/* ===== HERO RIGHT : RETRIEVAL CONSOLE ===== */
+.hero-right{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; animation:fadeIn 1.4s ease .3s both; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.console{ width:460px; max-width:100%; background:rgba(12,10,9,.84); border:1px solid rgba(255,107,26,.22); border-radius:18px; overflow:hidden; backdrop-filter:blur(10px); box-shadow:0 20px 60px rgba(0,0,0,.55); position:relative; }
+.con-bar{ display:flex; align-items:center; gap:8px; padding:11px 16px; background:rgba(255,107,26,.05); border-bottom:1px solid rgba(255,107,26,.14); }
+.con-bar .dots{ display:flex; gap:5px; }
+.con-bar .dots i{ width:9px; height:9px; border-radius:50%; background:rgba(255,107,26,.28); }
+.con-bar .dots i:first-child{ background:rgba(239,68,68,.6); }
+.con-bar .ctitle{ font-family:'JetBrains Mono'; font-size:.66rem; letter-spacing:1.3px; color:var(--muted); text-transform:uppercase; margin-left:6px; }
+.con-bar .clive{ margin-left:auto; display:flex; align-items:center; gap:6px; font-family:'JetBrains Mono'; font-size:.62rem; color:#4ade80; }
+.con-bar .clive i{ width:6px; height:6px; border-radius:50%; background:#22c55e; box-shadow:0 0 8px #22c55e; animation:pulse 1.4s infinite; }
+.con-body{ padding:18px 18px 20px; min-height:400px; }
+.cq{ font-family:'JetBrains Mono'; font-size:.75rem; color:#cfc9c4; line-height:1.6; margin-bottom:12px; min-height:36px; }
+.cq .prompt{ color:var(--orange); margin-right:6px; }
+.cstatus{ font-family:'JetBrains Mono'; font-size:.62rem; color:#6a6a6a; margin-bottom:14px; min-height:14px; letter-spacing:.3px; }
+.cstatus b{ color:var(--orange-bright); font-weight:500; }
+.chitblock{ margin-bottom:13px; opacity:0; transform:translateX(-8px); }
+.chitblock.in{ animation:chipIn .5s ease forwards; }
+@keyframes chipIn{ to{ opacity:1; transform:translateX(0); } }
+.chitblock .hdoc{ font-family:'JetBrains Mono'; font-size:.63rem; color:#cfc9c4; margin-bottom:1px; }
+.chitblock .hsec{ font-family:'JetBrains Mono'; font-size:.56rem; color:#6a6a6a; margin-bottom:6px; }
+.srow{ display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+.srow .sl{ font-family:'JetBrains Mono'; font-size:.55rem; width:44px; color:#7a7269; letter-spacing:.4px; }
+.srow .sb{ flex:1; height:6px; border-radius:4px; background:rgba(255,255,255,.04); overflow:hidden; }
+.srow .sb i{ display:block; height:100%; width:0; border-radius:4px; transition:width .85s cubic-bezier(.2,.7,.3,1); }
+.srow.bm .sl{ color:var(--bm25); } .srow.bm .sb i{ background:var(--bm25); }
+.srow.mn .sl{ color:var(--mini); } .srow.mn .sb i{ background:var(--mini); }
+.srow.fu{ margin-top:4px; }
+.srow.fu .sl{ color:var(--orange-bright); font-weight:500; }
+.srow.fu .sb{ height:9px; }
+.srow.fu .sb i{ background:linear-gradient(90deg,#7a2e00,#ff6b1a,#ff8c42); }
+.srow .sv{ font-family:'JetBrains Mono'; font-size:.58rem; width:36px; text-align:right; color:#8a8279; }
+.srow.fu .sv{ color:var(--orange-bright); }
+.carried{ font-family:'JetBrains Mono'; font-size:.54rem; color:#6a6a6a; margin-top:4px; padding-left:52px; }
+.carried b{ color:var(--mini); font-weight:500; }
+.carried b.k{ color:var(--bm25); }
+.cans{ margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,107,26,.12); font-size:.71rem; color:#a8a29b; line-height:1.7; min-height:38px; }
+.cans b{ color:var(--text); }
+.caret{ display:inline-block; width:6px; height:13px; background:var(--orange); vertical-align:middle; animation:blink .9s step-end infinite; }
+@keyframes blink{ 50%{opacity:0} }
+
+/* STATS */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; max-width:1340px; margin:0 auto; padding:10px 46px 90px; }
+.stat{ padding:6px 26px; border-left:1px solid rgba(255,107,26,.15); }
+.stat:first-child{ border-left:none; padding-left:0; }
+.stat .num{ font-family:'Space Grotesk'; font-size:2.1rem; font-weight:700; color:var(--orange-bright); }
+.stat .lbl{ font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+/* ===== CONTENT ===== */
+.wrap{ max-width:1200px; margin:0 auto; padding:20px 46px 90px; }
+.blocktitle{ font-family:'Space Grotesk'; font-size:1.7rem; font-weight:700; margin-bottom:8px; }
+.blocksub{ color:var(--muted); margin-bottom:34px; line-height:1.6; max-width:700px; }
+
+.assistant{ background:rgba(14,12,10,.6); border:1px solid rgba(255,107,26,.15); border-radius:20px; padding:30px; margin-bottom:24px; }
+.askbar{ display:flex; gap:10px; margin-bottom:20px; }
+.askbar input{ flex:1; background:rgba(255,255,255,.03); border:1px solid rgba(255,107,26,.2); border-radius:11px; padding:13px 16px; color:var(--text); font-family:'Inter',sans-serif; font-size:.88rem; outline:none; transition:all .25s; }
+.askbar input::placeholder{ color:#5f5a55; }
+.askbar input:focus{ border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,107,26,.1); background:rgba(255,107,26,.04); }
+.askbar button{ padding:13px 26px; border-radius:11px; border:none; cursor:pointer; font-weight:700; font-size:.88rem; background:linear-gradient(90deg,#ff6b1a,#ff8c42); color:#0a0a0a; transition:all .25s; }
+.askbar button:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,107,26,.45); }
+.qlbl{ font-family:'JetBrains Mono'; font-size:.66rem; letter-spacing:1.3px; color:#6a6a6a; text-transform:uppercase; margin-bottom:11px; }
+.qchips{ display:flex; flex-wrap:wrap; gap:9px; margin-bottom:26px; }
+.qchip{ font-size:.79rem; color:#cfc9c4; background:rgba(255,107,26,.05); border:1px solid rgba(255,107,26,.18); border-radius:22px; padding:8px 15px; cursor:pointer; transition:all .25s; position:relative; }
+.qchip:hover{ border-color:var(--orange); background:rgba(255,107,26,.11); transform:translateY(-2px); }
+.qchip.on{ border-color:var(--orange); background:rgba(255,107,26,.14); color:#fff; }
+.qchip.logged::after{ content:'NOTEBOOK RUN'; position:absolute; top:-7px; right:9px; font-family:'JetBrains Mono'; font-size:.48rem; letter-spacing:.6px; background:#22c55e; color:#04140a; padding:1px 6px; border-radius:10px; font-weight:700; }
+.qchip.trap{ border-color:rgba(239,68,68,.35); }
+.qchip.trap:hover{ border-color:#ef4444; background:rgba(239,68,68,.1); }
+
+.thinking{ font-family:'JetBrains Mono'; font-size:.76rem; color:#6a6a6a; padding:10px 0; }
+.thinking .dot{ animation:blink 1s step-end infinite; }
+.stagerow{ display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono'; font-size:.72rem; color:#7a7269; padding:6px 0; opacity:0; transform:translateY(6px); }
+.stagerow.in{ animation:rowIn .45s ease forwards; }
+@keyframes rowIn{ to{ opacity:1; transform:translateY(0); } }
+.stagerow .tick{ color:#4ade80; }
+
+.ansbox{ background:linear-gradient(135deg, rgba(255,107,26,.07), rgba(16,14,12,.7)); border:1px solid rgba(255,107,26,.22); border-radius:16px; padding:26px 28px; margin-bottom:18px; }
+.ansbox.refused{ background:linear-gradient(135deg, rgba(239,68,68,.09), rgba(16,14,12,.7)); border-color:rgba(239,68,68,.38); }
+.anstxt{ font-size:.9rem; color:#cfc9c4; line-height:1.85; min-height:60px; }
+.anstxt b{ color:var(--text); }
+.anstxt ul{ margin:11px 0 11px 20px; }
+.anstxt li{ margin-bottom:8px; }
+.anstxt .cite{ font-family:'JetBrains Mono'; font-size:.78em; color:var(--orange-bright); background:rgba(255,107,26,.1); padding:1px 6px; border-radius:4px; }
+.anstxt .warn{ display:block; margin-top:14px; padding:12px 15px; background:rgba(234,179,8,.07); border-left:2px solid #eab308; border-radius:8px; font-size:.84rem; color:#c9bfa8; }
+.anstxt .warn b{ color:#facc15; }
+
+.refusehead{ display:flex; align-items:center; gap:14px; margin-bottom:18px; padding-bottom:16px; border-bottom:1px solid rgba(239,68,68,.22); }
+.refuseicon{ width:46px; height:46px; min-width:46px; border-radius:13px; background:rgba(239,68,68,.11); border:1px solid rgba(239,68,68,.42); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+.refusehead .rh-t{ font-family:'Space Grotesk'; font-size:1.12rem; font-weight:700; color:#f87171; }
+.refusehead .rh-s{ font-family:'JetBrains Mono'; font-size:.66rem; letter-spacing:1.2px; color:#8a6a6a; margin-top:3px; }
+.refusehead .rh-code{ margin-left:auto; font-family:'JetBrains Mono'; font-size:.68rem; color:#f87171; background:rgba(239,68,68,.11); border:1px solid rgba(239,68,68,.4); border-radius:20px; padding:5px 13px; white-space:nowrap; }
+.tempt{ background:rgba(0,0,0,.3); border:1px dashed rgba(239,68,68,.32); border-radius:11px; padding:15px 17px; margin:16px 0; }
+.tempt .tt{ font-family:'JetBrains Mono'; font-size:.62rem; letter-spacing:1.2px; color:#8a6a6a; text-transform:uppercase; margin-bottom:9px; }
+.tempt .tq{ font-size:.82rem; color:#7a6a6a; line-height:1.7; font-style:italic; }
+.tempt .tx{ font-size:.78rem; color:#a8a29b; line-height:1.7; margin-top:11px; padding-top:11px; border-top:1px solid rgba(239,68,68,.18); }
+.tempt .tx b{ color:#f87171; }
+.trylbl{ font-family:'JetBrains Mono'; font-size:.64rem; letter-spacing:1.2px; color:#6a6a6a; text-transform:uppercase; margin:18px 0 10px; }
+
+.srcrow{ margin-top:20px; padding-top:17px; border-top:1px solid rgba(255,107,26,.14); }
+.srclbl{ font-size:.67rem; letter-spacing:1.3px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
+.srctag{ display:inline-flex; align-items:center; gap:7px; font-family:'JetBrains Mono'; font-size:.71rem; color:var(--orange-bright); background:rgba(255,107,26,.09); border:1px solid rgba(255,107,26,.24); padding:5px 12px; border-radius:20px; margin:3px 5px 3px 0; }
+.srctag .sc{ color:#7a7269; }
+
+/* ---- evidence coverage ---- */
+.gbox{ background:rgba(255,255,255,.018); border:1px solid rgba(255,107,26,.14); border-radius:16px; padding:24px 26px; margin-bottom:18px; }
+.ghead{ margin-bottom:6px; font-family:'Space Grotesk'; font-size:1.04rem; font-weight:700; }
+.ghsub{ font-size:.79rem; color:#7a7269; line-height:1.65; margin-bottom:20px; max-width:660px; }
+.gmetrics{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.gm{ padding:15px 16px; border-radius:12px; background:rgba(255,107,26,.04); border:1px solid rgba(255,107,26,.13); transition:all .3s; }
+.gm:hover{ border-color:rgba(255,107,26,.4); }
+.gm .gv{ font-family:'Space Grotesk'; font-size:1.5rem; font-weight:700; color:var(--orange-bright); line-height:1.1; }
+.gm .gl{ font-size:.73rem; color:#e8e2dc; margin-top:6px; font-weight:600; line-height:1.4; }
+.gm .gd{ font-size:.67rem; color:#7a7269; margin-top:5px; line-height:1.55; }
+.gnote{ font-size:.75rem; color:#8a8279; line-height:1.75; margin-top:18px; padding:14px 16px; background:rgba(0,0,0,.22); border-left:2px solid rgba(255,107,26,.4); border-radius:8px; }
+.gnote b{ color:var(--orange-bright); }
+.gwarn{ font-size:.75rem; color:#8a8279; line-height:1.75; margin-top:10px; padding:14px 16px; background:rgba(234,179,8,.05); border-left:2px solid rgba(234,179,8,.45); border-radius:8px; }
+.gwarn b{ color:#facc15; }
+
+/* ---- expandable evidence ---- */
+.tracebox{ background:rgba(255,255,255,.018); border:1px solid rgba(255,107,26,.13); border-radius:16px; padding:24px 26px; }
+.tracehead{ display:flex; align-items:center; gap:10px; font-family:'JetBrains Mono'; font-size:.68rem; letter-spacing:1.3px; color:#6a6a6a; text-transform:uppercase; margin-bottom:16px; flex-wrap:wrap; }
+.tracehead .lg{ font-size:.58rem; letter-spacing:.7px; background:rgba(34,197,94,.12); color:#4ade80; border:1px solid rgba(34,197,94,.4); border-radius:20px; padding:2px 9px; }
+.tracehead .hint{ margin-left:auto; text-transform:none; letter-spacing:0; font-size:.66rem; color:#5a534c; }
+.chunkcard{ background:rgba(255,255,255,.02); border:1px solid rgba(255,107,26,.13); border-left:2px solid var(--orange); border-radius:10px; margin-bottom:10px; opacity:0; transform:translateY(10px); overflow:hidden; }
+.chunkcard.in{ animation:rowIn .5s ease forwards; }
+.chunkcard .chead{ display:flex; align-items:center; gap:10px; padding:13px 17px; cursor:pointer; flex-wrap:wrap; transition:background .2s; }
+.chunkcard .chead:hover{ background:rgba(255,107,26,.05); }
+.chunkcard .chev{ width:14px; color:var(--orange); font-size:.7rem; transition:transform .3s; display:inline-block; }
+.chunkcard.open .chev{ transform:rotate(90deg); }
+.chunkcard .csrc{ font-family:'JetBrains Mono'; font-size:.72rem; color:var(--orange-bright); }
+.chunkcard .csec{ font-family:'JetBrains Mono'; font-size:.68rem; color:#7a7269; }
+.chunkcard .cscores{ margin-left:auto; display:flex; gap:9px; font-family:'JetBrains Mono'; font-size:.63rem; }
+.chunkcard .cscores .k{ color:var(--bm25); } .chunkcard .cscores .m{ color:var(--mini); } .chunkcard .cscores .f{ color:var(--orange-bright); }
+.chunkcard .cbody{ max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.chunkcard.open .cbody{ max-height:560px; }
+.chunkcard .ctext{ font-size:.78rem; color:#a8a29b; line-height:1.7; padding:0 17px 15px; }
+.chunkcard .cprev{ font-size:.75rem; color:#6a6a6a; line-height:1.6; padding:0 17px 13px; }
+.chunkcard.open .cprev{ display:none; }
+
+/* ---- evidence boundary grid ---- */
+.boundary{ background:rgba(14,12,10,.6); border:1px solid rgba(255,107,26,.15); border-radius:20px; padding:28px 30px; margin-bottom:26px; }
+.bhead{ display:flex; align-items:center; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+.bhead .bq{ font-size:.82rem; color:#cfc9c4; font-style:italic; flex:1; min-width:220px; }
+.blegend{ display:flex; gap:16px; flex-wrap:wrap; font-family:'JetBrains Mono'; font-size:.64rem; color:#6a6a6a; }
+.blegend span{ display:flex; align-items:center; gap:6px; }
+.blegend i{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+.blegend i.used{ background:var(--orange); box-shadow:0 0 8px var(--orange-glow); }
+.blegend i.unused{ background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); }
+.blegend i.hdr{ background:repeating-linear-gradient(45deg, rgba(234,179,8,.35) 0 3px, transparent 3px 6px); border:1px solid rgba(234,179,8,.35); }
+.bgrid{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.bcol .bdoc{ font-family:'JetBrains Mono'; font-size:.62rem; color:#7a7269; margin-bottom:8px; text-align:center; }
+.bsec{ font-family:'JetBrains Mono'; font-size:.56rem; color:#5a534c; background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.06); border-radius:6px; padding:7px 5px; margin-bottom:5px; text-align:center; line-height:1.3; transition:all .45s; min-height:34px; display:flex; align-items:center; justify-content:center; }
+.bsec.hdr{ background:repeating-linear-gradient(45deg, rgba(234,179,8,.07) 0 3px, transparent 3px 6px); border-color:rgba(234,179,8,.2); color:#7a6a3a; }
+.bsec.used{ background:rgba(255,107,26,.16); border-color:var(--orange); color:#ffd9a0; box-shadow:0 0 14px rgba(255,107,26,.26); }
+.bfoot{ font-size:.76rem; color:#8a8279; line-height:1.75; margin-top:18px; padding-top:16px; border-top:1px solid rgba(255,107,26,.1); }
+.bfoot b{ color:var(--orange-bright); }
+
+/* ---- pipeline ---- */
+.pipe{ display:flex; align-items:stretch; background:linear-gradient(150deg, rgba(255,107,26,.05), rgba(10,8,6,.55)); border:1px solid rgba(255,107,26,.16); border-radius:20px; padding:24px 18px; margin-bottom:20px; overflow-x:auto; }
+.pstage{ flex:1 1 0; min-width:124px; padding:16px 13px; border-radius:13px; background:rgba(14,12,10,.86); border:1px solid rgba(255,107,26,.16); transition:all .4s; opacity:.5; }
+.pstage.lit{ opacity:1; border-color:rgba(255,107,26,.5); box-shadow:0 0 20px rgba(255,107,26,.14); }
+.pstage:hover{ opacity:1; border-color:var(--orange); }
+.pstage .pn{ width:19px; height:19px; border-radius:50%; background:rgba(255,107,26,.14); border:1px solid rgba(255,107,26,.45); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono'; font-size:.55rem; color:var(--orange-bright); margin-bottom:9px; }
+.pstage.lit .pn{ background:var(--orange); color:#0a0a0a; }
+.pstage .pt{ font-family:'Space Grotesk'; font-size:.76rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:6px; }
+.pstage .pd{ font-size:.64rem; color:#7a7269; line-height:1.55; margin-bottom:9px; min-height:44px; }
+.pstage .pc{ font-family:'JetBrains Mono'; font-size:.58rem; color:var(--orange-bright); background:rgba(255,107,26,.07); border:1px solid rgba(255,107,26,.16); border-radius:6px; padding:5px 7px; line-height:1.5; word-break:break-word; }
+.pstage.split{ background:linear-gradient(160deg, rgba(255,107,26,.09), rgba(14,12,10,.86)); }
+.pstage.guard{ border-color:rgba(239,68,68,.28); }
+.pstage.guard .pn{ background:rgba(239,68,68,.14); border-color:rgba(239,68,68,.5); color:#f87171; }
+.pstage.guard.lit .pn{ background:#ef4444; color:#140404; }
+.pstage.guard .pc{ color:#f87171; background:rgba(239,68,68,.07); border-color:rgba(239,68,68,.2); }
+.pconn{ flex:0 0 18px; display:flex; align-items:center; justify-content:center; position:relative; }
+.pconn::before{ content:''; position:absolute; left:0; right:0; height:1px; background:rgba(255,107,26,.25); }
+.pconn i{ position:absolute; width:5px; height:5px; border-radius:50%; background:var(--orange-bright); box-shadow:0 0 9px var(--orange-glow); animation:flowDot 2.8s linear infinite; }
+@keyframes flowDot{ 0%{ left:-3px; opacity:0 } 15%{opacity:1} 85%{opacity:1} 100%{ left:calc(100% - 2px); opacity:0 } }
+
+/* CORPUS */
+.corpus{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:26px; }
+.doccard{ padding:20px; border-radius:15px; background:linear-gradient(160deg, rgba(255,107,26,.05), rgba(16,14,12,.72)); border:1px solid rgba(255,107,26,.14); transition:all .3s; position:relative; }
+.doccard:hover{ transform:translateY(-4px); border-color:rgba(255,107,26,.45); box-shadow:0 12px 30px rgba(255,107,26,.15); }
+.doccard .dnum{ font-family:'JetBrains Mono'; font-size:.63rem; color:var(--orange); letter-spacing:1px; }
+.doccard .dname{ font-family:'Space Grotesk'; font-size:.98rem; font-weight:600; margin:7px 0 8px; line-height:1.35; }
+.doccard .dpurpose{ font-size:.76rem; color:#a8a29b; line-height:1.6; margin-bottom:11px; padding-left:9px; border-left:2px solid rgba(255,107,26,.3); }
+.doccard .dfile{ font-family:'JetBrains Mono'; font-size:.63rem; color:#6a6a6a; word-break:break-all; margin-bottom:11px; }
+.doccard .dsecs{ display:flex; flex-wrap:wrap; gap:5px; }
+.doccard .dsec{ font-family:'JetBrains Mono'; font-size:.59rem; color:#a8a29b; background:rgba(255,107,26,.06); border:1px solid rgba(255,107,26,.14); border-radius:6px; padding:3px 7px; }
+.doccard .dcount{ position:absolute; top:16px; right:16px; font-family:'Space Grotesk'; font-size:1.5rem; font-weight:700; color:rgba(255,140,66,.3); }
+.corpusnote{ font-family:'JetBrains Mono'; font-size:.73rem; color:#6a6a6a; line-height:1.7; margin-bottom:70px; }
+.corpusnote b{ color:var(--orange-bright); }
+
+/* WHY TWO RETRIEVERS */
+.whygrid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px; }
+.whycard{ background:rgba(255,255,255,.02); border:1px solid rgba(255,107,26,.14); border-radius:16px; padding:24px 26px; transition:all .3s; }
+.whycard:hover{ border-color:rgba(255,107,26,.4); }
+.whycard .wname{ font-family:'JetBrains Mono'; font-size:.68rem; letter-spacing:1.3px; text-transform:uppercase; margin-bottom:8px; }
+.whycard.k .wname{ color:var(--bm25); } .whycard.m .wname{ color:var(--mini); }
+.whycard h5{ font-family:'Space Grotesk'; font-size:1.04rem; font-weight:600; margin-bottom:9px; }
+.whycard p{ font-size:.82rem; color:#7a7269; line-height:1.7; margin-bottom:12px; }
+.whycard .wex{ font-family:'JetBrains Mono'; font-size:.7rem; color:#a8a29b; background:rgba(0,0,0,.3); border-radius:7px; padding:12px 13px; line-height:1.75; }
+.whycard.k .wex{ border-left:2px solid var(--bm25); } .whycard.m .wex{ border-left:2px solid var(--mini); }
+.whycard .wex b{ color:var(--orange-bright); font-weight:500; }
+.whycard .wex .k{ color:var(--bm25); } .whycard .wex .m{ color:var(--mini); }
+
+/* OPEN ITEM */
+.openitem{ display:grid; grid-template-columns:auto 1fr; gap:20px; align-items:flex-start; background:linear-gradient(135deg, rgba(234,179,8,.07), rgba(16,14,12,.7)); border:1px solid rgba(234,179,8,.3); border-radius:18px; padding:28px 32px; margin-bottom:60px; }
+.openitem .oic{ font-size:1.7rem; }
+.openitem .otag{ font-family:'JetBrains Mono'; font-size:.66rem; letter-spacing:1.8px; color:#facc15; margin-bottom:10px; }
+.openitem h4{ font-family:'Space Grotesk'; font-size:1.22rem; margin-bottom:12px; }
+.openitem p{ color:#a8a29b; line-height:1.78; font-size:.88rem; margin-bottom:11px; }
+.openitem p:last-child{ margin-bottom:0; }
+.openitem code{ font-family:'JetBrains Mono'; background:rgba(234,179,8,.1); color:#facc15; padding:2px 7px; border-radius:5px; font-size:.9em; }
+.openitem b{ color:var(--text); }
+
+/* INTEGRITY CARDS */
+.icards{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:26px; }
+.icard{ background:linear-gradient(150deg, rgba(255,107,26,.09), rgba(16,14,12,.72)); border:1px solid rgba(255,107,26,.28); border-radius:18px; padding:26px 24px; transition:all .3s; }
+.icard:hover{ transform:translateY(-4px); border-color:var(--orange); box-shadow:0 14px 36px rgba(255,107,26,.18); }
+.icard .iic{ width:38px; height:38px; border-radius:11px; background:rgba(255,107,26,.1); border:1px solid rgba(255,107,26,.32); display:flex; align-items:center; justify-content:center; font-size:1.05rem; margin-bottom:14px; }
+.icard h4{ font-family:'Space Grotesk'; font-size:1.06rem; font-weight:700; margin-bottom:10px; line-height:1.35; }
+.icard p{ font-size:.82rem; color:#a8a29b; line-height:1.75; }
+.icard code{ font-family:'JetBrains Mono'; background:rgba(0,0,0,.32); color:var(--orange-bright); padding:2px 6px; border-radius:4px; font-size:.88em; }
+.icard b{ color:var(--text); }
+
+.reveal{ opacity:0; transform:translateY(40px); transition:all .7s ease; }
+.reveal.show{ opacity:1; transform:translateY(0); }
+@media(max-width:1100px){
+  .gmetrics{ grid-template-columns:repeat(2,1fr); }
+  .icards{ grid-template-columns:1fr; }
+  .bgrid{ grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:960px){
+  .hero{ grid-template-columns:1fr; text-align:center; padding-top:110px; }
+  .hero-right{ order:-1; }
+  .console{ width:100%; max-width:460px; }
+  .cq,.cans,.chitblock{ text-align:left; }
+  .cta-row{ justify-content:center; }
+  .stats{ grid-template-columns:repeat(2,1fr); gap:18px; }
+  .stat{ border-left:none; padding-left:0; }
+  .corpus,.whygrid{ grid-template-columns:1fr; }
+  .openitem{ grid-template-columns:1fr; }
+  .askbar{ flex-direction:column; }
+  .bgrid{ grid-template-columns:repeat(2,1fr); }
+  .gmetrics{ grid-template-columns:1fr; }
+  .navlinks a:not(.nav-cta){ display:none; }
+  nav{ padding:14px 20px; }
+  .wrap{ padding:20px 20px 70px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-particles" id="bgp"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+
+<nav>
+  <div class="logo"><span class="mark"></span> FraudGuard AI</div>
+  <div class="navlinks"><a href="index.html">Home</a><a href="detect.html">Detect</a><a href="investigate.html">Investigate</a><a href="ask.html" class="active">Ask</a><a href="about.html">About</a><a href="detect.html" class="nav-cta">Get Started</a></div>
+</nav>
+
+<header class="hero">
+  <div class="hero-left">
+    <div class="badge-top"><span class="live"></span> ASK &#183; HYBRID RETRIEVAL &#183; GROUNDED ANSWERS</div>
+    <h1>
+      <span class="word" style="animation-delay:.10s">Ask</span>
+      <span class="word" style="animation-delay:.24s">the</span>
+      <span class="word" style="animation-delay:.38s">policy.</span><br>
+      <span class="word" style="animation-delay:.56s">Get</span>
+      <span class="word" style="animation-delay:.70s">the</span>
+      <span class="word" style="animation-delay:.84s"><span class="grad">citation.</span></span>
+    </h1>
+    <p class="sub">Six fraud-policy documents, split into 31 sections and indexed twice &#8212; once by keyword, once by meaning. Every answer names the sections it came from, and refuses when the library has nothing to say.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#assistant">Ask a Question &#8594;</a>
+      <a class="btn btn-ghost" href="#pipeline">See the Pipeline</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="console">
+      <div class="con-bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="ctitle">retrieval console</span>
+        <span class="clive"><i></i> live</span>
+      </div>
+      <div class="con-body">
+        <div class="cq"><span class="prompt">&gt;</span><span id="cqText"></span><span class="caret" id="cqCaret"></span></div>
+        <div class="cstatus" id="cStatus"></div>
+        <div id="cHits"></div>
+        <div class="cans" id="cAns"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="num" data-target="6">0</div><div class="lbl">Policy Documents</div></div>
+  <div class="stat"><div class="num" data-target="31">0</div><div class="lbl">Indexed Sections</div></div>
+  <div class="stat"><div class="num" data-target="384">0</div><div class="lbl">Embedding Dimensions</div></div>
+  <div class="stat"><div class="num" data-target="3">0</div><div class="lbl">Sections per Answer</div></div>
+</div>
+
+<div class="wrap">
+
+  <!-- ASSISTANT -->
+  <div class="reveal" id="assistant">
+    <div class="blocktitle">Ask the fraud policy assistant</div>
+    <div class="blocksub">Pick a question or type your own. Every score on this page &#8212; BM25, MiniLM and fused &#8212; comes from running the real index. The two marked <b style="color:#4ade80">NOTEBOOK RUN</b> also match the scores captured in the original Colab session, digit for digit. Try the red one to see what happens when the library has no answer.</div>
+
+    <div class="assistant">
+      <div class="askbar">
+        <input id="askInput" type="text" placeholder="Ask about risk bands, address history, device policy, income tiering...">
+        <button id="askBtn">Ask</button>
+      </div>
+      <div class="qlbl">Suggested questions</div>
+      <div class="qchips" id="qChips"></div>
+      <div id="answerZone"></div>
+    </div>
+  </div>
+
+  <!-- EVIDENCE BOUNDARY -->
+  <div class="reveal">
+    <div class="blocktitle">Evidence boundary</div>
+    <div class="blocksub">All 31 indexed sections, laid out by document. Lit cells are the three the model actually received. Everything dim was in the index and lost &#8212; which is where retrieval failures become visible instead of invisible.</div>
+    <div class="boundary">
+      <div class="bhead">
+        <div class="bq" id="bQuery"></div>
+        <div class="blegend">
+          <span><i class="used"></i> sent to the model</span>
+          <span><i class="unused"></i> indexed, not retrieved</span>
+          <span><i class="hdr"></i> header block</span>
+        </div>
+      </div>
+      <div class="bgrid" id="bGrid"></div>
+      <div class="bfoot" id="bFoot"></div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="reveal" id="pipeline">
+    <div class="blocktitle">The retrieval pipeline</div>
+    <div class="blocksub">Eight stages between a typed question and a cited answer. The two retrievers run independently and only meet at the blend &#8212; which is the whole point of the design.</div>
+    <div class="pipe" id="pipeBox"></div>
+    <div class="corpusnote" style="margin-bottom:70px">Each score array is normalised <b>before</b> blending, not after. BM25 returns unbounded term-frequency scores while cosine similarity is bounded to <b>[-1, 1]</b> &#8212; summed raw, BM25 would decide every result on its own and the semantic lane would be decorative.</div>
+  </div>
+
+  <!-- CORPUS -->
+  <div class="reveal" id="corpus">
+    <div class="blocktitle">The corpus</div>
+    <div class="blocksub">Six documents written as internal fraud-prevention policy. Each is split on its numbered headings, so a retrieved chunk is always a complete, quotable section rather than an arbitrary window of characters. The purpose line under each title is quoted from that document&#8217;s own &#8220;1. Purpose&#8221; section.</div>
+    <div class="corpus" id="corpusGrid"></div>
+    <div class="corpusnote">Chunking rule: <b>re.split(r'\n(?=\d+\.\s)')</b> &#8212; splits at a newline followed by &#8220;<b>N.</b> &#8221;. Sub-numbered clauses like <b>3.1</b> stay attached to their parent section because the digit after the dot is not whitespace. Total across all six: <b>31 sections</b>, which is exactly what the index holds.</div>
+  </div>
+
+  <!-- WHY TWO RETRIEVERS -->
+  <div class="reveal">
+    <div class="blocktitle">Why two retrievers, not one</div>
+    <div class="blocksub">Each one fails in a way the other covers. Both examples below are real rows from the runs on this page &#8212; the component scores show one lane rescuing a section the other had nearly discarded.</div>
+    <div class="whygrid">
+      <div class="whycard k">
+        <div class="wname">BM25 &#183; keyword</div>
+        <h5>Carries the section when the words line up</h5>
+        <p>Scores term overlap against the section text. It wins when the question names a field or phrase that appears verbatim in policy, and it is unbeatable on rare exact tokens that embeddings smooth away.</p>
+        <div class="wex">&#8220;high value application from a new device&#8221;<br>&#8594; <b>05_escalation_procedure</b> &#183; 1. Purpose<br><span class="k">BM25 1.000</span> &nbsp; <span class="m">MiniLM 0.739</span> &nbsp; fused <b>0.869</b><br><span style="color:#6a6a6a">keyword lane ranked it first; the embedding lane did not</span></div>
+      </div>
+      <div class="whycard m">
+        <div class="wname">MiniLM &#183; semantic</div>
+        <h5>Rescues the section the keywords miss</h5>
+        <p>Encodes the question into 384 dimensions and compares by cosine similarity. It wins when the wording differs entirely from the policy text &#8212; which is how investigators actually phrase questions.</p>
+        <div class="wex">&#8220;&#8230;no address history and comes from a new device&#8221;<br>&#8594; <b>02_device_session_risk_policy</b> &#183; 2. Background<br><span class="k">BM25 0.437</span> &nbsp; <span class="m">MiniLM 0.990</span> &nbsp; fused <b>0.714</b><br><span style="color:#6a6a6a">the section never says &#8220;new device&#8221; &#8212; BM25 nearly dropped it</span></div>
+      </div>
+    </div>
+    <div class="corpusnote" style="margin-bottom:70px">When both retrievers rank the <b>same</b> section first, the blend hands it a fused score of exactly <b>1.000</b>, because each array is min&#8211;max normalised to a maximum of 1 before being averaged. A top score <b>below</b> 1.000 therefore means the two disagreed on first place &#8212; a free diagnostic, readable straight off the number.</div>
+  </div>
+
+  <!-- OPEN ITEM -->
+  <div class="openitem reveal">
+    <div class="oic">&#128269;</div>
+    <div>
+      <div class="otag">KNOWN LIMITATION &#183; OPEN ITEM</div>
+      <h4>Retrieval can miss the one section that answers the question.</h4>
+      <p>Ask <b>&#8220;How reliable is the risk score itself?&#8221;</b> above and watch the evidence boundary. The governance document&#8217;s <code>2. Known limitations</code> &#8212; the section that actually quantifies reliability, with the 1-in-6 precision figure and the ranking-versus-precision note &#8212; <b>does not make the top 3</b>. A device-policy section beats it at <code>0.727</code>. The answer is still correctly grounded in what arrived, but it is grounded in the wrong three sections.</p>
+      <p>The same failure appeared in an investigation run: a query naming <b>&#8220;high income applicant&#8221;</b> did not retrieve the income-tiering policy, so the model reported that income was &#8220;not mentioned in the provided policies.&#8221; The guard behaved correctly both times; the retriever did not.</p>
+      <p>Cause: <code>top_k = 3</code> over 31 sections with no reranking. A multi-part query splits its signal, and BM25 rewards sections that repeat the query&#8217;s common words rather than the ones that answer it. Documented fixes, in order: widen the candidate set and add a <b>cross-encoder reranker</b>; then decompose multi-factor queries into one retrieval per factor. Neither is implemented yet.</p>
+    </div>
+  </div>
+
+  <!-- INTEGRITY CARDS -->
+  <div class="reveal">
+    <div class="blocktitle">Engineering integrity</div>
+    <div class="blocksub">Three decisions on this page that were easier to get wrong than right.</div>
+    <div class="icards">
+      <div class="icard">
+        <div class="iic">&#128737;</div>
+        <h4>&#8220;Not covered&#8221; is a feature, not a failure.</h4>
+        <p>The system prompt permits exactly one fallback: if the retrieved sections do not answer the question, reply <code>NOT_COVERED</code> and stop. No general knowledge, no reasonable-sounding guess. A fraud assistant that invents a policy clause is <b>worse</b> than one that stays silent, because the invented clause reads exactly like a real one.</p>
+      </div>
+      <div class="icard">
+        <div class="iic">&#128202;</div>
+        <h4>Every score here was computed, not chosen.</h4>
+        <p>Component scores were never logged in the notebook &#8212; only fused ones. Rather than back-fill a plausible split, the index was rebuilt and re-run: same chunking, same <code>BM25Okapi</code>, same <code>all-MiniLM-L6-v2</code>. The two notebook queries reproduced <b>1.000 / 0.714 / 0.634</b> and <b>0.869 / 0.745 / 0.706</b> exactly, which is what makes the rest of the numbers trustworthy.</p>
+      </div>
+      <div class="icard">
+        <div class="iic">&#129529;</div>
+        <h4>Six of the 31 chunks are junk.</h4>
+        <p>The <b>header block</b> of every document &#8212; title, department, &#8220;applies to&#8221; &#8212; is chunk 0 of its file. It carries no policy content, yet it is embedded and retrievable like any real section. That is <code>6</code> of <code>31</code> index slots earning their place purely by accident of the chunking rule.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------- cursor glow (same as Home / Detect / Investigate) ---------- */
+document.addEventListener('mousemove', function(e){
+  document.getElementById('glow').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)';
+  document.getElementById('glow2').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)';
+});
+
+/* ---------- background particles ---------- */
+var bgp=document.getElementById('bgp');
+for(var i=0;i<16;i++){ var s=document.createElement('i'); s.style.left=(Math.random()*100)+'%'; s.style.animationDuration=(9+Math.random()*10)+'s'; s.style.animationDelay=(Math.random()*10)+'s'; var sc=.5+Math.random()*1.4; s.style.width=(2*sc)+'px'; s.style.height=(2*sc)+'px'; bgp.appendChild(s); }
+
+/* ============================================================
+   SECTION CATALOG — the 31 indexed chunks, verified by running
+   the notebook's own chunking regex over the six .txt files.
+   ============================================================ */
+var DOCS=[
+  {n:'01', file:'01_identity_verification_policy.txt', name:'Identity Verification and Address History',
+   purpose:'Sets out how address history should be treated when assessing the fraud risk of a new account application.',
+   secs:['header','1. Purpose','2. Background','3. Policy','4. Rationale','5. Review cadence']},
+  {n:'02', file:'02_device_session_risk_policy.txt', name:'Device and Session Risk',
+   purpose:'Describes how device operating system and session behaviour should be weighted in fraud risk assessment.',
+   secs:['header','1. Purpose','2. Background','3. Policy','4. Caution']},
+  {n:'03', file:'03_income_risk_tiering_policy.txt', name:'Income-Based Risk Tiering',
+   purpose:'Addresses the counter-intuitive finding that higher-income applicant profiles show a higher, not lower, fraud rate.',
+   secs:['header','1. Purpose','2. Background','3. Policy','4. Rationale']},
+  {n:'04', file:'04_contact_verification_policy.txt', name:'Contact Verification',
+   purpose:'Governs how home phone verification status and free-email-domain usage feed into risk scoring.',
+   secs:['header','1. Purpose','2. Background','3. Policy','4. Escalation threshold']},
+  {n:'05', file:'05_escalation_procedure.txt', name:'Escalation and Investigation Procedure',
+   purpose:'Describes the workflow an investigator follows once an application is flagged by the risk-scoring system.',
+   secs:['header','1. Purpose','2. Risk bands','3. Investigation steps','4. Decision threshold selection','5. Escalation contact']},
+  {n:'06', file:'06_model_governance_policy.txt', name:'Model Governance and Known Limitations',
+   purpose:'Records the known limitations of the risk-scoring model so reviewers and analysts do not over-trust its output.',
+   secs:['header','1. Purpose','2. Known limitations','3. Reviewer guidance']}
+];
+
+/* ============================================================
+   Q&A DATA
+   Every bm / mini / fused value below was produced by rebuilding
+   the index and re-running the pipeline over the six .txt files:
+   same chunking regex, BM25Okapi, all-MiniLM-L6-v2, alpha 0.5.
+   `notebook:true` marks the two queries whose fused scores also
+   match the original Colab log exactly.
+
+   BACKEND SEAM: replace lookup() with
+     fetch('/api/ask', {method:'POST', body: JSON.stringify({q})})
+   and every render function below works unchanged.
+   ============================================================ */
+var QA = [
+  {
+    q:'An application has no address history and comes from a new device. What should the investigator do?',
+    keys:['address','device','new device','no address','history'],
+    notebook:true,
+    chunks:[
+      {sid:'05:1', src:'05_escalation_procedure.txt', sec:'1. Purpose', bm:1.000, mini:1.000, fused:1.000,
+       text:'This procedure describes the workflow an investigator should follow once an application is flagged by the automated risk-scoring system.'},
+      {sid:'02:2', src:'02_device_session_risk_policy.txt', sec:'2. Background', bm:0.437, mini:0.990, fused:0.714,
+       text:'Feature-importance analysis of the fraud detection model identified device operating system and session "keep-alive" behavior among the top contributing factors to fraud risk, together accounting for roughly 16% of total model decision weight. Applications originating from a Windows device showed a measurably higher association with fraud outcomes than other operating systems in the training population.'},
+      {sid:'01:3', src:'01_identity_verification_policy.txt', sec:'3. Policy', bm:0.569, mini:0.699, fused:0.634,
+       text:'3.1 An application where the applicant\'s previous-address-months field is absent or encoded as unknown must be treated as an identity-verification risk signal, not simply as missing data. 3.3 Applications with no address history AND at least one additional elevated risk signal should be routed to manual review rather than auto-approved.'}
+    ],
+    answer:'The investigator should <b>route the application to manual review</b>.<ul><li>The identity-verification policy states that an application with no address history <b>and at least one additional elevated risk signal</b> must be sent for manual review rather than auto-approved <span class="cite">01_identity_verification_policy.txt &#167;3.3</span></li><li>The device-session policy identifies the device operating system as an elevated fraud-risk factor <span class="cite">02_device_session_risk_policy.txt &#167;2</span></li></ul>Because the application lacks address history and originates from a new device, it meets the criteria for manual review.'
+  },
+  {
+    q:'What should an investigator do for a high-value application from a new device?',
+    keys:['high value','high-value','value','new device','investigator'],
+    notebook:true,
+    chunks:[
+      {sid:'05:1', src:'05_escalation_procedure.txt', sec:'1. Purpose', bm:1.000, mini:0.739, fused:0.869,
+       text:'This procedure describes the workflow an investigator should follow once an application is flagged by the automated risk-scoring system.'},
+      {sid:'05:2', src:'05_escalation_procedure.txt', sec:'2. Risk bands', bm:0.848, mini:0.642, fused:0.745,
+       text:'2.1 LOW (score below 30): No manual action required. Application proceeds through standard processing. 2.2 MEDIUM (score 30-69): Application is queued for a single-reviewer check. 2.3 HIGH (score 70 and above): Application is queued for two-reviewer sign-off. Both reviewers must independently confirm the risk factors before a decision is finalized.'},
+      {sid:'02:2', src:'02_device_session_risk_policy.txt', sec:'2. Background', bm:0.411, mini:1.000, fused:0.706,
+       text:'Applications originating from a Windows device showed a measurably higher association with fraud outcomes than other operating systems in the training population. Sessions that are not kept alive were also more strongly associated with fraudulent outcomes than persistent sessions.'}
+    ],
+    answer:'<b>Follow the band the score lands in, then corroborate the device signal.</b><ul><li><b>LOW</b> (below 30) proceeds through standard processing; <b>MEDIUM</b> (30&#8211;69) goes to a single reviewer; <b>HIGH</b> (70+) requires two-reviewer sign-off <span class="cite">05_escalation_procedure.txt &#167;2</span></li><li>Device operating system is a measured risk association, not a decisive one <span class="cite">02_device_session_risk_policy.txt &#167;2</span></li></ul><span class="warn"><b>Gap in the evidence:</b> none of the three retrieved sections defines a &#8220;high-value&#8221; application or treats value as a risk factor. The answer above covers the <i>device</i> half of the question only &#8212; the value half is unsupported by what was retrieved.</span>'
+  },
+  {
+    q:'What are the risk bands and what action does each need?',
+    keys:['band','bands','risk band','action','score range','threshold'],
+    notebook:false,
+    chunks:[
+      {sid:'05:2', src:'05_escalation_procedure.txt', sec:'2. Risk bands', bm:1.000, mini:1.000, fused:1.000,
+       text:'2.1 LOW (score below 30): No manual action required. Application proceeds through standard processing. 2.2 MEDIUM (score 30-69): Application is queued for a single-reviewer check. Reviewer confirms whether any single strong signal is present without corroborating signals; if so, application may be cleared with a note. 2.3 HIGH (score 70 and above): Application is queued for two-reviewer sign-off. Both reviewers must independently confirm the risk factors before a decision is finalized.'},
+      {sid:'05:3', src:'05_escalation_procedure.txt', sec:'3. Investigation steps', bm:0.736, mini:0.715, fused:0.726,
+       text:'3.1 Reviewer examines the top contributing factors surfaced by the risk-scoring system for the specific application (not just the overall model-wide feature importance). 3.2 Reviewer cross-checks each surfaced factor against the relevant policy document. 3.3 Reviewer documents which combination of factors drove the decision, for audit purposes.'},
+      {sid:'06:1', src:'06_model_governance_policy.txt', sec:'1. Purpose', bm:0.344, mini:0.826, fused:0.585,
+       text:'This document records the known limitations of the current risk-scoring model so that reviewers and analysts do not over-trust its output.'}
+    ],
+    answer:'Three bands, each with a different amount of human review:<ul><li><b>LOW</b> &#8212; score below 30. No manual action; standard processing <span class="cite">05_escalation_procedure.txt &#167;2.1</span></li><li><b>MEDIUM</b> &#8212; 30 to 69. Single-reviewer check. If one strong signal appears without corroboration, the case may be cleared with a note <span class="cite">&#167;2.2</span></li><li><b>HIGH</b> &#8212; 70 and above. Two-reviewer sign-off, each confirming the factors independently <span class="cite">&#167;2.3</span></li></ul>In every band the reviewer works from the factors surfaced <b>for that specific application</b>, cross-checks each against the relevant policy, and records which combination drove the decision <span class="cite">&#167;3</span>. The governance document adds the framing: the score exists to be questioned, not over-trusted <span class="cite">06_model_governance_policy.txt &#167;1</span>.'
+  },
+  {
+    q:'Is a high income applicant lower risk?',
+    keys:['income','high income','wealthy','rich','earner','bracket'],
+    notebook:false,
+    chunks:[
+      {sid:'03:2', src:'03_income_risk_tiering_policy.txt', sec:'2. Background', bm:1.000, mini:0.857, fused:0.928,
+       text:'Exploratory analysis of account-opening data found that observed fraud rate rose from approximately 0.58% in the lowest income bracket to approximately 2.16% in the highest income bracket - nearly a fourfold increase. This is attributed to higher-income and higher-credit-limit accounts presenting a larger potential payout to a fraudster, making them a more attractive target for identity theft and synthetic-identity fraud, rather than income itself being predictive of applicant dishonesty.'},
+      {sid:'03:3', src:'03_income_risk_tiering_policy.txt', sec:'3. Policy', bm:0.709, mini:0.962, fused:0.836,
+       text:'3.1 High-income-bracket applications must not receive reduced scrutiny on the assumption that higher income implies lower risk. Historical data directly contradicts this assumption. 3.2 High-income-bracket applications requesting a proposed credit limit in the top decile should receive at least the same level of identity and device verification as lower-income applications. 3.3 Where operational capacity requires prioritization of manual review queues, income bracket should not be used as a de-prioritization signal.'},
+      {sid:'03:1', src:'03_income_risk_tiering_policy.txt', sec:'1. Purpose', bm:0.532, mini:1.000, fused:0.766,
+       text:'This policy addresses the counter-intuitive finding that higher-income applicant profiles show a higher, not lower, fraud rate in historical data.'}
+    ],
+    answer:'<b>No &#8212; the opposite.</b> Observed fraud rate rises from roughly <b>0.58%</b> in the lowest income bracket to <b>2.16%</b> in the highest: close to a fourfold increase <span class="cite">03_income_risk_tiering_policy.txt &#167;2</span>.<ul><li>High-income applications <b>must not</b> receive reduced scrutiny on the assumption that income implies safety <span class="cite">&#167;3.1</span></li><li>A top-decile credit-limit request gets <b>at least</b> the same identity and device verification as a lower-income one <span class="cite">&#167;3.2</span></li><li>Income bracket <b>must not</b> be used to de-prioritise a case in the review queue <span class="cite">&#167;3.3</span></li></ul>The stated reason is payout size, not applicant character: higher income and higher credit limits make an account a more attractive target for identity theft <span class="cite">&#167;2</span>.'
+  },
+  {
+    q:'Should free-email-domain usage trigger a review?',
+    keys:['email','free email','gmail','domain','contact'],
+    notebook:false,
+    chunks:[
+      {sid:'04:1', src:'04_contact_verification_policy.txt', sec:'1. Purpose', bm:0.967, mini:1.000, fused:0.984,
+       text:'This policy governs how home phone verification status and free-email-domain usage should be incorporated into risk scoring.'},
+      {sid:'04:3', src:'04_contact_verification_policy.txt', sec:'3. Policy', bm:1.000, mini:0.953, fused:0.977,
+       text:'3.1 An application where the home phone number cannot be verified must be flagged for enhanced review if it co-occurs with any other elevated signal (no address history, device anomaly, top-decile credit limit request). 3.2 Free-email-domain usage alone is common among legitimate applicants and must not trigger review in isolation. 3.3 Applications with verified phone AND an established address history should generally be treated as lower priority for manual review.'},
+      {sid:'04:2', src:'04_contact_verification_policy.txt', sec:'2. Background', bm:0.881, mini:0.784, fused:0.832,
+       text:'Phone-verification status was identified as one of the top contributing features in the fraud detection model, ranking alongside income and device signals in overall importance. Free-email-domain usage (as opposed to a paid or employer-issued domain) also showed a measurable, if smaller, association with fraud outcomes.'}
+    ],
+    answer:'<b>Not on its own.</b> Free-email-domain usage is common among legitimate applicants and <b>must not</b> trigger review in isolation <span class="cite">04_contact_verification_policy.txt &#167;3.2</span>.<ul><li>It does carry a measurable but <b>smaller</b> association with fraud than phone-verification status, which ranks alongside income and device signals <span class="cite">&#167;2</span></li><li>It becomes relevant in combination &#8212; an unverifiable home phone must be flagged for enhanced review when it co-occurs with any other elevated signal <span class="cite">&#167;3.1</span></li><li>Verified phone <b>and</b> established address history together make a case lower priority for manual review <span class="cite">&#167;3.3</span></li></ul>'
+  },
+  {
+    q:'How should a Windows device be treated?',
+    keys:['windows','device','operating system','os','session'],
+    notebook:false,
+    chunks:[
+      {sid:'02:1', src:'02_device_session_risk_policy.txt', sec:'1. Purpose', bm:1.000, mini:1.000, fused:1.000,
+       text:'This policy describes how device operating system and session behavior should be weighted in fraud risk assessment.'},
+      {sid:'02:2', src:'02_device_session_risk_policy.txt', sec:'2. Background', bm:0.829, mini:0.952, fused:0.891,
+       text:'Feature-importance analysis of the fraud detection model identified device operating system and session "keep-alive" behavior among the top contributing factors to fraud risk, together accounting for roughly 16% of total model decision weight. Applications originating from a Windows device showed a measurably higher association with fraud outcomes than other operating systems in the training population.'},
+      {sid:'02:3', src:'02_device_session_risk_policy.txt', sec:'3. Policy', bm:0.575, mini:0.870, fused:0.723,
+       text:'3.1 Device operating system must be logged and included in every risk score calculation. It is a supporting signal only and must never be used as a sole basis for decline, since operating system reflects device population mix and is not a moral or causal indicator of fraud intent. 3.2 Session persistence behavior should be monitored for anomalies. 3.3 Neither signal individually crosses the threshold for automatic escalation.'}
+    ],
+    answer:'<b>Log it, score it, never decide on it alone.</b><ul><li>Operating system must be logged and included in every risk calculation, but it is a <b>supporting signal only</b> and must <b>never</b> be the sole basis for decline <span class="cite">02_device_session_risk_policy.txt &#167;3.1</span></li><li>Neither device nor session behaviour individually crosses the threshold for automatic escalation <span class="cite">&#167;3.3</span></li><li>Windows applications did show a measurably higher association with fraud, and device plus session together account for roughly <b>16%</b> of model decision weight <span class="cite">&#167;2</span></li></ul>The policy is explicit that OS reflects <b>device population mix</b>, not fraud intent <span class="cite">&#167;3.1</span>. Worth noting that <code style="font-family:\'JetBrains Mono\';color:var(--orange-bright)">device_os_windows</code> is the model&#8217;s second-strongest feature at <b>0.085</b> importance &#8212; the model leans on a signal the policy deliberately caps.'
+  },
+  {
+    q:'How reliable is the risk score itself?',
+    keys:['reliable','reliability','trust','accurate','score itself','limitation','governance'],
+    notebook:false,
+    chunks:[
+      {sid:'06:3', src:'06_model_governance_policy.txt', sec:'3. Reviewer guidance', bm:1.000, mini:0.644, fused:0.822,
+       text:'Reviewers should treat the risk score and its contributing factors as a prioritization and investigation aid, not as an automated verdict. Final decisions on borderline (MEDIUM/HIGH band) cases remain a human responsibility per the Escalation and Investigation Procedure.'},
+      {sid:'02:3', src:'02_device_session_risk_policy.txt', sec:'3. Policy', bm:0.926, mini:0.527, fused:0.727,
+       text:'3.1 Device operating system must be logged and included in every risk score calculation. It is a supporting signal only and must never be used as a sole basis for decline. 3.3 Neither signal individually crosses the threshold for automatic escalation.'},
+      {sid:'05:2', src:'05_escalation_procedure.txt', sec:'2. Risk bands', bm:0.592, mini:0.840, fused:0.716,
+       text:'2.1 LOW (score below 30): No manual action required. 2.2 MEDIUM (score 30-69): Application is queued for a single-reviewer check. 2.3 HIGH (score 70 and above): Application is queued for two-reviewer sign-off.'}
+    ],
+    answer:'<b>Reliable enough to prioritise, not to decide.</b> Reviewers must treat the score and its factors as a <b>prioritisation and investigation aid, not an automated verdict</b>; final decisions on MEDIUM and HIGH band cases remain a human responsibility <span class="cite">06_model_governance_policy.txt &#167;3</span>. The bands encode that directly &#8212; higher score buys more human scrutiny, not a decision <span class="cite">05_escalation_procedure.txt &#167;2</span>.<span class="warn"><b>Retrieval failure, visible on this page:</b> the section that actually <i>quantifies</i> reliability &#8212; <code style="font-family:\'JetBrains Mono\'">06_model_governance &#167;2. Known limitations</code>, holding the 1-in-6 precision figure and the ranking-versus-precision note &#8212; did <b>not</b> reach the top 3. A device-policy section outranked it at <code style="font-family:\'JetBrains Mono\'">0.727</code>. The answer is honestly grounded in what arrived; what arrived was the wrong evidence.</span>'
+  }
+];
+
+var REFUSAL = {
+  q:'What is the daily transaction limit for a premium account?',
+  refused:true,
+  notebook:false,
+  chunks:[
+    {sid:'03:3', src:'03_income_risk_tiering_policy.txt', sec:'3. Policy', bm:1.000, mini:0.794, fused:0.897,
+     text:'3.2 High-income-bracket applications requesting a proposed credit limit in the top decile should receive at least the same level of identity and device verification as lower-income applications, and should not be fast-tracked purely on the basis of income.'},
+    {sid:'03:2', src:'03_income_risk_tiering_policy.txt', sec:'2. Background', bm:0.758, mini:0.888, fused:0.823,
+     text:'Exploratory analysis of account-opening data found that observed fraud rate rose from approximately 0.58% in the lowest income bracket to approximately 2.16% in the highest income bracket. This is attributed to higher-income and higher-credit-limit accounts presenting a larger potential payout to a fraudster.'},
+    {sid:'06:2', src:'06_model_governance_policy.txt', sec:'2. Known limitations', bm:0.845, mini:0.646, fused:0.746,
+     text:'2.1 The model was trained and validated on a historical, offline dataset. It has not been validated on live traffic. 2.2 Given the low base rate of fraud (approximately 1.1% of applications), even a well-performing model produces a meaningful number of false positives.'}
+  ],
+  temptQ:'Premium accounts sit in the top income decile, and the policy requires the same verification there &#8212; so the daily transaction limit for a premium account is set at&#8230;',
+  temptX:'Two of the three retrieved sections talk about a real numeric boundary &#8212; a <b>top-decile credit limit</b> and a <b>fraud base rate</b>. Stitching them into a daily transaction limit would read as fluent, confident, correctly-cited policy. It would also be entirely <b>fabricated</b>.',
+  answer:'<b>This is not covered in the available policies.</b><br><br>Retrieval still returned three sections, because min&#8211;max normalisation <i>always</i> produces a top-ranked result: something is always the best match, even when nothing is a good one. A top hit at <b>0.897</b> here looks identical in shape to a top hit at <b>0.897</b> on a question the corpus genuinely answers.<br><br>The corpus governs <b>account-opening applications</b> &#8212; identity, device, income tiering, contact verification, escalation and model governance. It says nothing about operating an account after approval, and no section defines a daily transaction limit.'
+};
+
+/* ---------- suggested question chips ---------- */
+function renderChips(){
+  var box=document.getElementById('qChips');
+  box.innerHTML='';
+  QA.forEach(function(item){
+    var c=document.createElement('div');
+    c.className='qchip'+(item.notebook?' logged':'');
+    c.textContent=item.q;
+    c.onclick=function(){
+  setActive(c);
+  document.getElementById('askInput').value=item.q;
+  document.getElementById('askBtn').click();
+};
+    box.appendChild(c);
+  });
+  var t=document.createElement('div');
+  t.className='qchip trap';
+  t.textContent=REFUSAL.q;
+  t.onclick=function(){
+  setActive(t);
+  document.getElementById('askInput').value=REFUSAL.q;
+  document.getElementById('askBtn').click();
+};
+  box.appendChild(t);
+}
+function setActive(el){
+  document.querySelectorAll('.qchip').forEach(function(c){ c.classList.remove('on'); });
+  if(el) el.classList.add('on');
+}
+
+/* ---------- evidence coverage: all four figures are counts ---------- */
+function coverage(item){
+  var docs={};
+  item.chunks.forEach(function(c){ docs[c.src]=1; });
+  return {
+    sections:item.chunks.length,
+    docs:Object.keys(docs).length,
+    cites:(item.answer.match(/class="cite"/g)||[]).length,
+    top:item.chunks[0].fused.toFixed(3),
+    agree:item.chunks[0].fused>=0.9995
+  };
+}
+
+/* ---------- render one answer ---------- */
+var answerTimers=[], typeTimer=null;
+async function askBackend(question) {
+  const response = await fetch('http://127.0.0.1:8000/api/ask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ q: question })
+  });
+
+  if (!response.ok) {
+    throw new Error('Backend returned ' + response.status);
+  }
+  return await response.json();
+}
+function ask(item){
+  answerTimers.forEach(clearTimeout); answerTimers=[];
+  if(typeTimer){ clearInterval(typeTimer); typeTimer=null; }
+  document.getElementById('askInput').value=item.q;
+  paintBoundary(item);
+
+  var zone=document.getElementById('answerZone');
+  zone.innerHTML='<div class="thinking">searching 31 sections<span class="dot">.</span><span class="dot" style="animation-delay:.2s">.</span><span class="dot" style="animation-delay:.4s">.</span></div>';
+
+  var steps=['tokenising query for BM25','encoding query to 384 dimensions','min–max normalising both score arrays','blending at α = 0.5, taking top 3'];
+  answerTimers.push(setTimeout(function(){
+    zone.innerHTML='';
+    steps.forEach(function(s,i){
+      var r=document.createElement('div');
+      r.className='stagerow';
+      r.innerHTML='<span class="tick">&#10003;</span> '+s;
+      zone.appendChild(r);
+      answerTimers.push(setTimeout(function(){ r.classList.add('in'); }, i*230));
+    });
+  },520));
+
+  answerTimers.push(setTimeout(function(){
+    zone.innerHTML='';
+    var g=coverage(item);
+
+    /* ---- answer ---- */
+    var box=document.createElement('div');
+    box.className='ansbox'+(item.refused?' refused':'');
+    var inner='';
+    if(item.refused){
+      inner+='<div class="refusehead"><div class="refuseicon">&#128737;</div>'
+           + '<div><div class="rh-t">The guard fired.</div><div class="rh-s">GENERATION STOPPED BEFORE IT STARTED</div></div>'
+           + '<div class="rh-code">NOT_COVERED</div></div>';
+    }
+    inner+='<div class="anstxt" id="ansTxt"></div>';
+    if(item.refused){
+      inner+='<div class="tempt"><div class="tt">What it could have said</div>'
+           + '<div class="tq">&#8220;'+item.temptQ+'&#8221;</div>'
+           + '<div class="tx">'+item.temptX+'</div></div>'
+           + '<div class="trylbl">Questions the corpus does answer &#8212; try one</div>'
+           + '<div class="qchips" id="altChips"></div>';
+    }
+    inner+='<div class="srcrow"><div class="srclbl">Sources cited</div><div>';
+    var seen={};
+    item.chunks.forEach(function(c){
+      if(seen[c.src]) return; seen[c.src]=1;
+      inner+='<span class="srctag">'+c.src+'<span class="sc">fused '+c.fused.toFixed(3)+'</span></span>';
+    });
+    inner+='</div></div>';
+    box.innerHTML=inner;
+    zone.appendChild(box);
+
+    if(item.refused){
+      var alt=box.querySelector('#altChips');
+      [QA[2],QA[3],QA[5]].forEach(function(q){
+        var c=document.createElement('div');
+        c.className='qchip'+(q.notebook?' logged':'');
+        c.textContent=q.q;
+        c.onclick=function(){ setActive(null); ask(q); document.getElementById('assistant').scrollIntoView({behavior:'smooth'}); };
+        alt.appendChild(c);
+      });
+    }
+
+    /* ---- evidence coverage ---- */
+    var gb=document.createElement('div');
+    gb.className='gbox';
+    gb.innerHTML='<div class="ghead">Evidence coverage</div>'
+      + '<div class="ghsub">How much of the policy library the model was actually shown when it wrote the answer above. These four figures are <b style="color:#cfc9c4">counts of what happened</b>, not a confidence score &#8212; none of them says whether the answer is correct.</div>'
+      + '<div class="gmetrics">'
+      + '<div class="gm"><div class="gv">'+g.sections+' of 31</div><div class="gl">Sections the model could read</div><div class="gd">The remaining '+(31-g.sections)+' were in the index but never shown to it</div></div>'
+      + '<div class="gm"><div class="gv">'+g.docs+' of 6</div><div class="gl">Policy files represented</div><div class="gd">Distinct documents those '+g.sections+' sections came from</div></div>'
+      + '<div class="gm"><div class="gv">'+g.cites+'</div><div class="gl">Citations inside the answer</div><div class="gd">Each names the exact section the claim came from</div></div>'
+      + '<div class="gm"><div class="gv">'+g.top+'</div><div class="gl">Highest fused score</div><div class="gd">0&#8211;1 after normalisation; reaches 1.000 only on agreement</div></div>'
+      + '</div>'
+      + '<div class="gnote">'+(g.agree
+          ? 'The top score is exactly <b>1.000</b>, which means <b>both retrievers ranked the same section first</b>. Each array is min&#8211;max normalised to a maximum of 1 before averaging, so only agreement can reach it.'
+          : 'The top score is <b>'+g.top+'</b>, below 1.000 &#8212; so <b>the two retrievers disagreed on first place</b>. BM25 and the embedding model each had a different favourite, and neither reached the normalised maximum after blending.')
+      + '</div>'
+      + '<div class="gwarn"><b>What this does not measure:</b> a high coverage reading means the model was given three sections from the library &#8212; not that they were the <i>right</i> three. Retrieval always returns a top-3, so these figures look the same whether the evidence answers the question or misses it entirely.</div>';
+    zone.appendChild(gb);
+
+    /* ---- expandable evidence ---- */
+    var tr=document.createElement('div');
+    tr.className='tracebox';
+    tr.innerHTML='<div class="tracehead">Retrieved sections &#183; real component scores'
+      + (item.notebook ? '<span class="lg">FUSED VALUES MATCH THE NOTEBOOK LOG</span>' : '')
+      + '<span class="hint">click a row to expand the full section</span>'
+      + '</div><div id="trChunks"></div>';
+    zone.appendChild(tr);
+
+    var cl=tr.querySelector('#trChunks');
+    item.chunks.forEach(function(ch,i){
+      var el=document.createElement('div');
+      el.className='chunkcard'+(i===0?' open':'');
+      var prev=ch.text.length>108 ? ch.text.slice(0,108)+'…' : ch.text;
+      el.innerHTML='<div class="chead"><span class="chev">&#9654;</span><span class="csrc">'+ch.src+'</span><span class="csec">'+ch.sec+'</span>'
+        + '<span class="cscores"><span class="k">BM25 '+ch.bm.toFixed(3)+'</span><span class="m">MiniLM '+ch.mini.toFixed(3)+'</span><span class="f">FUSED '+ch.fused.toFixed(3)+'</span></span>'
+        + '</div><div class="cprev">'+prev+'</div><div class="cbody"><div class="ctext">'+ch.text+'</div></div>';
+      el.querySelector('.chead').onclick=function(){ el.classList.toggle('open'); };
+      cl.appendChild(el);
+      answerTimers.push(setTimeout(function(){ el.classList.add('in'); }, 300+i*190));
+    });
+
+    typeInto(document.getElementById('ansTxt'), item.answer);
+  },1700));
+}
+
+function typeInto(box, html){
+  var shown=0;
+  typeTimer=setInterval(function(){
+    shown+=9;
+    if(shown>=html.length){ box.innerHTML=html; clearInterval(typeTimer); typeTimer=null; return; }
+    var slice=html.slice(0,shown);
+    var open=slice.lastIndexOf('<'), close=slice.lastIndexOf('>');
+    if(open>close) slice=slice.slice(0,open);
+    box.innerHTML=slice+'<span class="caret"></span>';
+  },16);
+}
+
+document.getElementById('askBtn').onclick=async function(){
+  var v=document.getElementById('askInput').value.trim();
+  if(!v) return;
+
+  setActive(null);
+
+  try {
+    var data = await askBackend(v);
+
+    var item = {
+      q: data.question,
+      answer: data.answer,
+      refused: data.answer === 'NOT_COVERED',
+      chunks: data.sources.map(function(r, i){
+        return {
+  sid: 'backend:' + i,
+  src: r.source,
+  sec: 'Retrieved section',
+  bm: Number(r.bm25 || 0),
+  mini: Number(r.embedding || 0),
+  fused: Number(r.score || 0),
+  text: r.text || ''
+};
+      })
+    };
+
+    ask(item);
+
+  } catch(error) {
+    console.error('RAG API error:', error);
+    alert('RAG backend error. Check the FastAPI terminal.');
+  }
+};
+document.getElementById('askInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter') document.getElementById('askBtn').click();
+});
+
+/* ---------- evidence boundary grid ---------- */
+(function buildGrid(){
+  var g=document.getElementById('bGrid');
+  DOCS.forEach(function(d){
+    var col=document.createElement('div');
+    col.className='bcol';
+    var html='<div class="bdoc">DOC '+d.n+'</div>';
+    d.secs.forEach(function(s,i){
+      html+='<div class="bsec'+(i===0?' hdr':'')+'" data-sid="'+d.n+':'+i+'">'+s+'</div>';
+    });
+    col.innerHTML=html;
+    g.appendChild(col);
+  });
+})();
+function paintBoundary(item){
+  document.getElementById('bQuery').innerHTML='&#8220;'+item.q+'&#8221;';
+  var used={};
+  item.chunks.forEach(function(c){ used[c.sid]=1; });
+  document.querySelectorAll('.bsec').forEach(function(el){
+    el.classList.toggle('used', !!used[el.dataset.sid]);
+  });
+  var docs={}; item.chunks.forEach(function(c){ docs[c.src]=1; });
+  document.getElementById('bFoot').innerHTML='<b>'+item.chunks.length+'</b> of <b>31</b> sections reached the model, drawn from <b>'+Object.keys(docs).length+'</b> of <b>6</b> documents. '
+    + (item.refused
+        ? 'None of them answers the question &#8212; but retrieval had no way to say so, which is exactly why the guard sits downstream of it.'
+        : 'The other '+(31-item.chunks.length)+' were indexed and available, and lost. If the answer needed one of them, no amount of prompting downstream could recover it.');
+}
+
+/* ---------- retrieval pipeline ---------- */
+var PIPE=[
+  {t:'Query',      d:'An investigator types a question in their own words.', c:'raw string'},
+  {t:'BM25 lane',  d:'Lowercase, whitespace-tokenise, score term overlap against all 31 sections.', c:'BM25Okapi\n31 scores', split:true},
+  {t:'Vector lane',d:'Encode the query into a 384-dimension vector, compare by cosine similarity.', c:'all-MiniLM-L6-v2\n31 scores', split:true},
+  {t:'Normalise',  d:'Rescale each array to 0–1 separately, so neither lane can dominate on scale alone.', c:'(s − min)\n/ (max − min)'},
+  {t:'Blend',      d:'Weighted average of the two normalised arrays, equally weighted.', c:'α = 0.5'},
+  {t:'Top-k',      d:'Sort descending, keep the three highest-scoring sections, discard 28.', c:'k = 3'},
+  {t:'Generate',   d:'Sections become context. The model may use nothing else.', c:'gpt-oss-120b\ntemp 0.2'},
+  {t:'Guard',      d:'If the context does not answer the question, return NOT_COVERED and stop.', c:'NOT_COVERED', guard:true}
+];
+(function buildPipe(){
+  var box=document.getElementById('pipeBox');
+  PIPE.forEach(function(p,i){
+    if(i>0){
+      var cn=document.createElement('div');
+      cn.className='pconn';
+      cn.innerHTML='<i style="animation-delay:'+(i*.34)+'s"></i>';
+      box.appendChild(cn);
+    }
+    var el=document.createElement('div');
+    el.className='pstage'+(p.split?' split':'')+(p.guard?' guard':'');
+    el.id='pstage'+i;
+    el.innerHTML='<div class="pn">'+(i+1)+'</div><div class="pt">'+p.t+'</div><div class="pd">'+p.d+'</div>'
+      + '<div class="pc">'+p.c.replace(/\n/g,'<br>')+'</div>';
+    box.appendChild(el);
+  });
+  var fired=false;
+  new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting && !fired){
+        fired=true;
+        PIPE.forEach(function(p,i){
+          setTimeout(function(){ document.getElementById('pstage'+i).classList.add('lit'); }, i*300);
+        });
+      }
+    });
+  },{threshold:.25}).observe(box);
+})();
+
+/* ---------- corpus cards ---------- */
+(function buildCorpus(){
+  var g=document.getElementById('corpusGrid');
+  DOCS.forEach(function(d){
+    var el=document.createElement('div');
+    el.className='doccard';
+    el.innerHTML='<div class="dcount">'+d.secs.length+'</div>'
+      + '<div class="dnum">DOC '+d.n+'</div>'
+      + '<div class="dname">'+d.name+'</div>'
+      + '<div class="dpurpose">'+d.purpose+'</div>'
+      + '<div class="dfile">'+d.file+'</div>'
+      + '<div class="dsecs">'+d.secs.map(function(s){ return '<span class="dsec">'+s+'</span>'; }).join('')+'</div>';
+    g.appendChild(el);
+  });
+})();
+
+/* ---------- hero console loop : real BM25 / MiniLM / FUSED ---------- */
+var DEMO=[
+  { q:QA[0].q, hits:QA[0].chunks, a:'Route to <b>manual review</b> — no address history plus one elevated signal meets the criteria.' },
+  { q:QA[1].q, hits:QA[1].chunks, a:'Follow the band, then corroborate the device signal. <b>Value</b> itself is never defined.' },
+  { q:REFUSAL.q, hits:REFUSAL.chunks, refused:true, a:'<b>NOT_COVERED</b> — the guard fired. Nothing retrieved answers this.' }
+];
+var di=0, demoTimers=[];
+function runDemo(){
+  demoTimers.forEach(clearTimeout); demoTimers=[];
+  var d=DEMO[di%DEMO.length]; di++;
+
+  var qEl=document.getElementById('cqText'),
+      ansEl=document.getElementById('cAns'),
+      hitsEl=document.getElementById('cHits'),
+      stEl=document.getElementById('cStatus');
+  qEl.textContent=''; ansEl.innerHTML=''; hitsEl.innerHTML=''; stEl.innerHTML='';
+
+  var i=0;
+  var qt=setInterval(function(){
+    i+=2;
+    qEl.textContent=d.q.slice(0,i);
+    if(i<d.q.length) return;
+    clearInterval(qt);
+
+    demoTimers.push(setTimeout(function(){
+      stEl.innerHTML='BM25 scored <b>31</b> &#183; MiniLM encoded <b>384-d</b> &#183; blended at <b>&#945; 0.5</b>';
+    },280));
+
+    demoTimers.push(setTimeout(function(){
+      d.hits.forEach(function(h,k){
+        var el=document.createElement('div');
+        el.className='chitblock';
+        var carried='';
+        if(h.mini-h.bm>0.30) carried='<div class="carried">rescued by the <b>semantic</b> lane</div>';
+        else if(h.bm-h.mini>0.30) carried='<div class="carried">carried by the <b class="k">keyword</b> lane</div>';
+        el.innerHTML='<div class="hdoc">'+h.src.replace('.txt','')+'</div>'
+          + '<div class="hsec">'+h.sec+'</div>'
+          + '<div class="srow bm"><span class="sl">BM25</span><span class="sb"><i></i></span><span class="sv">'+h.bm.toFixed(3)+'</span></div>'
+          + '<div class="srow mn"><span class="sl">MiniLM</span><span class="sb"><i></i></span><span class="sv">'+h.mini.toFixed(3)+'</span></div>'
+          + '<div class="srow fu"><span class="sl">FUSED</span><span class="sb"><i></i></span><span class="sv">'+h.fused.toFixed(3)+'</span></div>'
+          + carried;
+        hitsEl.appendChild(el);
+        demoTimers.push(setTimeout(function(){
+          el.classList.add('in');
+          var bars=el.querySelectorAll('.sb i');
+          bars[0].style.width=(h.bm*100)+'%';
+          bars[1].style.width=(h.mini*100)+'%';
+          bars[2].style.width=(h.fused*100)+'%';
+        }, k*260));
+      });
+    },800));
+
+    demoTimers.push(setTimeout(function(){
+      var j=0, html=d.a;
+      var at=setInterval(function(){
+        j+=6;
+        if(j>=html.length){ ansEl.innerHTML=html; clearInterval(at); return; }
+        var sl=html.slice(0,j);
+        var o=sl.lastIndexOf('<'), c=sl.lastIndexOf('>');
+        if(o>c) sl=sl.slice(0,o);
+        ansEl.innerHTML=sl+'<span class="caret"></span>';
+      },18);
+    },2400));
+
+    demoTimers.push(setTimeout(runDemo, 8600));
+  },26);
+}
+runDemo();
+
+/* ---------- count-up stats ---------- */
+function countUp(el){
+  var t=+el.dataset.target, c=0, s=t/50;
+  (function tick(){ c+=s; if(c<t){ el.textContent=Math.floor(c); requestAnimationFrame(tick); } else el.textContent=t; })();
+}
+var counted=false;
+new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting&&!counted){ counted=true; document.querySelectorAll('.stats .num').forEach(countUp); } }); },{threshold:.4}).observe(document.querySelector('.stats'));
+
+/* ---------- reveal on scroll ---------- */
+var ro=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('show'); }); },{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
+
+/* ---------- boot ---------- */
+renderChips();
+document.getElementById('answerZone').innerHTML = '';
+</script>
+</body>
+</html>

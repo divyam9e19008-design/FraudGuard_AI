@@ -1,0 +1,19 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Contact Verification Policy
+Department: Fraud Prevention & Risk
+Applies to: New account-opening applications
+
+1. Purpose
+This policy governs how home phone verification status and free-email-domain usage should be incorporated into risk scoring.
+
+2. Background
+Phone-verification status was identified as one of the top contributing features in the fraud detection model, ranking alongside income and device signals in overall importance. Free-email-domain usage (as opposed to a paid or employer-issued domain) also showed a measurable, if smaller, association with fraud outcomes.
+
+3. Policy
+3.1 An application where the home phone number cannot be verified must be flagged for enhanced review if it co-occurs with any other elevated signal (no address history, device anomaly, top-decile credit limit request).
+3.2 Free-email-domain usage alone is common among legitimate applicants and must not trigger review in isolation.
+3.3 Applications with verified phone AND an established address history should generally be treated as lower priority for manual review, all other signals being neutral.
+
+4. Escalation threshold
+Two or more unverifiable contact signals occurring together (phone unverifiable, email domain flagged, or both) should be escalated per the Escalation Procedure document, regardless of the overall computed risk score.

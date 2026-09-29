@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+scikit-learn
+imbalanced-learn
+joblib
+python-dotenv
+rank-bm25
+sentence-transformers
+groq

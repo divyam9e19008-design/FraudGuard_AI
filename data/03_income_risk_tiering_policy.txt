@@ -1,0 +1,19 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Income-Based Risk Tiering Policy
+Department: Fraud Prevention & Risk
+Applies to: New account-opening applications
+
+1. Purpose
+This policy addresses the counter-intuitive finding that higher-income applicant profiles show a higher, not lower, fraud rate in historical data.
+
+2. Background
+Exploratory analysis of account-opening data found that observed fraud rate rose from approximately 0.58% in the lowest income bracket to approximately 2.16% in the highest income bracket — nearly a fourfold increase. This is attributed to higher-income and higher-credit-limit accounts presenting a larger potential payout to a fraudster, making them a more attractive target for identity theft and synthetic-identity fraud, rather than income itself being predictive of applicant dishonesty.
+
+3. Policy
+3.1 High-income-bracket applications must not receive reduced scrutiny on the assumption that higher income implies lower risk. Historical data directly contradicts this assumption.
+3.2 High-income-bracket applications requesting a proposed credit limit in the top decile should receive at least the same level of identity and device verification as lower-income applications, and should not be fast-tracked purely on the basis of income.
+3.3 Where operational capacity requires prioritization of manual review queues, income bracket should not be used as a de-prioritization signal.
+
+4. Rationale
+This policy exists specifically to counteract a plausible but incorrect assumption (that wealthier applicants are inherently lower-risk) that internal analysis showed to be false for this fraud pattern. Analysts should treat this as a reminder that intuition should be checked against measured outcomes before being encoded into review priority.

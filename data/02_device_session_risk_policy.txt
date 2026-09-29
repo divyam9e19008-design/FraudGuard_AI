@@ -1,0 +1,19 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Device and Session Risk Policy
+Department: Fraud Prevention & Risk
+Applies to: New account-opening applications, digital channel
+
+1. Purpose
+This policy describes how device operating system and session behavior should be weighted in fraud risk assessment.
+
+2. Background
+Feature-importance analysis of the fraud detection model identified device operating system and session "keep-alive" behavior among the top contributing factors to fraud risk, together accounting for roughly 16% of total model decision weight. Applications originating from a Windows device showed a measurably higher association with fraud outcomes than other operating systems in the training population. Sessions that are not kept alive (closed and reopened rather than persisted) were also more strongly associated with fraudulent outcomes than persistent sessions.
+
+3. Policy
+3.1 Device operating system must be logged and included in every risk score calculation. It is a supporting signal only and must never be used as a sole basis for decline, since operating system reflects device population mix and is not a moral or causal indicator of fraud intent.
+3.2 Session persistence behavior should be monitored for anomalies, particularly rapid session cycling (open, close, reopen) during a single application.
+3.3 Neither signal individually crosses the threshold for automatic escalation. Escalation to manual review is only warranted when device or session anomalies co-occur with identity or contact-verification risk signals (see Identity Verification Policy, Contact Verification Policy).
+
+4. Caution
+Device and session signals evolve over time as consumer technology usage shifts. This policy assumes the operating-system population mix at the time of model training and must be revisited if the applicant device population changes materially (e.g., large enterprise onboarding, geographic expansion).

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FraudGuard AI — About</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{ --orange:#ff6b1a; --orange-bright:#ff8c42; --orange-glow:rgba(255,107,26,.5); --bg:#080706; --text:#f5f5f5; --muted:#9a9a9a; }
+html{ scroll-behavior:smooth; }
+body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body::before{ content:''; position:fixed; inset:0; z-index:-3; pointer-events:none; background:radial-gradient(800px 600px at 78% 45%, rgba(255,107,26,.14), transparent 60%), radial-gradient(600px 500px at 10% -5%, rgba(255,107,26,.08), transparent 55%); }
+body::after{ content:''; position:fixed; inset:0; z-index:-2; pointer-events:none; background-image:linear-gradient(rgba(255,107,26,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,26,.02) 1px, transparent 1px); background-size:60px 60px; -webkit-mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); }
+.bg-particles{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.bg-particles i{ position:absolute; width:2px; height:2px; border-radius:50%; background:rgba(255,140,66,.5); animation:drift linear infinite; }
+@keyframes drift{ 0%{ transform:translateY(100vh) scale(0); opacity:0; } 10%{opacity:.7;} 90%{opacity:.7;} 100%{ transform:translateY(-10vh) scale(1); opacity:0; } }
+#glow{ position:fixed; width:210px; height:210px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.13), transparent 62%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .16s cubic-bezier(.22,.61,.36,1); mix-blend-mode:screen; }
+@keyframes markPulse{ 0%,100%{box-shadow:0 0 14px var(--orange-glow)} 50%{box-shadow:0 0 24px rgba(255,140,66,.8)} }
+#glow2{ position:fixed; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,80,.25), transparent 60%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .06s linear; mix-blend-mode:screen; }
+nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 46px; background:rgba(8,7,6,.5); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,107,26,.1); }
+.logo{ display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; }
+.logo .mark{ width:30px; height:30px; min-width:30px; border-radius:50%; background:linear-gradient(135deg,#ff6b1a,#ff8c42); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px var(--orange-glow); animation:markPulse 3s ease-in-out infinite; }
+.logo .mark::after{ content:''; width:11px; height:11px; background:#080706; border-radius:50%; }
+.navlinks{ display:flex; gap:4px; align-items:center; }
+.navlinks a{ color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:500; padding:8px 15px; border-radius:8px; transition:all .2s; }
+.navlinks a:hover{ color:var(--orange-bright); }
+.navlinks a.active{ color:#fff; }
+.navlinks a.active::after{ content:''; display:block; height:2px; width:60%; margin:3px auto 0; background:var(--orange); border-radius:2px; box-shadow:0 0 8px var(--orange-glow); }
+.nav-cta{ padding:9px 22px !important; border:1px solid var(--orange); border-radius:9px; color:var(--orange-bright) !important; font-weight:600; }
+.nav-cta:hover{ background:rgba(255,107,26,.1); box-shadow:0 0 20px rgba(255,107,26,.3); }
+
+.hero{ min-height:100vh; display:grid; grid-template-columns:1.02fr .98fr; align-items:center; gap:20px; padding:120px 46px 50px; max-width:1320px; margin:0 auto; }
+.hero-left{ z-index:5; }
+.badge-top{ display:inline-flex; align-items:center; gap:9px; padding:7px 17px; border-radius:30px; margin-bottom:26px; background:rgba(255,107,26,.07); border:1px solid rgba(255,107,26,.22); font-size:.82rem; color:#cfc9c4; font-weight:500; animation:fadeUp .8s ease both; }
+.badge-top .live{ width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 10px #22c55e; animation:pulse 1.6s infinite; }
+@keyframes pulse{ 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.55} }
+.hero h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(2.6rem,5.6vw,4.6rem); font-weight:700; line-height:1.03; letter-spacing:-2px; margin-bottom:22px; }
+.hero h1 .word{ display:inline-block; opacity:0; transform:translateY(30px) rotateX(-40deg); animation:wordIn .7s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes wordIn{ to{ opacity:1; transform:translateY(0) rotateX(0); } }
+.hero h1 .grad{ background:linear-gradient(100deg,#ff6b1a,#ff8c42,#ffd9a0,#ff8c42,#ff6b1a); background-size:250% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s linear infinite; cursor:pointer; transition:filter .3s; position:relative; }
+@keyframes shimmer{ to{ background-position:250% center; } }
+.hero h1 .grad:hover{ filter:drop-shadow(0 0 22px rgba(255,140,66,.6)) brightness(1.15); }
+.hero h1 .grad::after{ content:''; position:absolute; left:0; bottom:-6px; height:4px; width:100%; background:linear-gradient(90deg,transparent,var(--orange),transparent); transform:scaleX(0); transform-origin:left; animation:underSweep 1s ease 1.4s forwards; border-radius:4px; }
+@keyframes underSweep{ to{ transform:scaleX(1); } }
+.hero p.sub{ font-size:clamp(1rem,1.6vw,1.18rem); color:var(--muted); max-width:530px; line-height:1.65; margin-bottom:36px; animation:fadeUp .8s ease .9s both; }
+.cta-row{ display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp .8s ease 1.05s both; }
+.btn{ padding:14px 28px; border-radius:12px; font-weight:700; font-size:.94rem; text-decoration:none; transition:all .25s; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; }
+.btn-primary{ background:linear-gradient(90deg,#ff6b1a,#ff8c42); color:#0a0a0a; box-shadow:0 6px 26px rgba(255,107,26,.35); position:relative; overflow:hidden; }
+.btn-primary::after{ content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); animation:btnShine 3.5s ease-in-out infinite; }
+@keyframes btnShine{ 0%{left:-100%} 50%,100%{left:160%} }
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 10px 34px rgba(255,107,26,.6); }
+.btn-ghost{ background:transparent; color:var(--text); border:1px solid rgba(255,107,26,.3); }
+.btn-ghost:hover{ background:rgba(255,107,26,.08); border-color:var(--orange); transform:translateY(-3px); }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:translateY(0)} }
+
+/* ===== HERO RIGHT : LAYERED SYSTEM STACK ===== */
+.hero-right{ position:relative; display:flex; align-items:center; justify-content:center; animation:fadeIn 1.4s ease .3s both; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.stack{ width:450px; max-width:100%; position:relative; }
+.stack::before{ content:''; position:absolute; inset:-8% -14%; border-radius:32px; background:radial-gradient(circle at 50% 45%, rgba(255,107,26,.16), transparent 68%); animation:stackGlow 6s ease-in-out infinite; pointer-events:none; z-index:0; }
+@keyframes stackGlow{ 0%,100%{opacity:.5} 50%{opacity:1} }
+.spine{ position:absolute; left:-20px; top:12px; bottom:12px; width:2px; border-radius:2px; background:rgba(255,107,26,.14); overflow:hidden; z-index:1; }
+.spine i{ position:absolute; left:0; width:2px; height:30%; border-radius:2px; background:linear-gradient(180deg,transparent,var(--orange-bright),transparent); box-shadow:0 0 10px var(--orange-glow); animation:spineRun 4.2s ease-in-out infinite; }
+@keyframes spineRun{ 0%{top:-32%} 100%{top:102%} }
+.slab{ position:relative; z-index:2; background:rgba(13,11,9,.84); border:1px solid rgba(255,107,26,.2); border-radius:16px; padding:17px 20px; margin-bottom:11px; backdrop-filter:blur(8px); transition:all .5s; opacity:.42; overflow:hidden; }
+.slab.lit{ opacity:1; border-color:rgba(255,107,26,.5); box-shadow:0 10px 32px rgba(0,0,0,.5); }
+.slab:hover{ opacity:1; border-color:var(--orange); transform:translateX(3px); }
+.slab.active{ border-color:var(--orange); box-shadow:0 0 0 1px rgba(255,107,26,.25), 0 14px 40px rgba(255,107,26,.16); transform:translateX(5px); }
+.slab.active::after{ content:''; position:absolute; top:0; bottom:0; left:-45%; width:38%; background:linear-gradient(90deg,transparent,rgba(255,140,66,.13),transparent); animation:slabSweep 1.5s ease-out; pointer-events:none; }
+@keyframes slabSweep{ to{ left:112%; } }
+.slab.active .sl-n{ background:var(--orange); color:#0a0a0a; box-shadow:0 0 16px var(--orange-glow); }
+.slab .sl-dot{ position:absolute; top:14px; right:14px; width:6px; height:6px; border-radius:50%; background:rgba(255,107,26,.22); transition:all .4s; }
+.slab.active .sl-dot{ background:#22c55e; box-shadow:0 0 10px #22c55e; }
+.slab.bypass{ animation:bypassFlick .9s ease; }
+@keyframes bypassFlick{ 0%,100%{opacity:.42} 40%{opacity:.72; border-color:rgba(234,179,8,.4)} }
+.slab .sl-top{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.slab .sl-n{ width:22px; height:22px; border-radius:6px; background:rgba(255,107,26,.13); border:1px solid rgba(255,107,26,.4); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono'; font-size:.56rem; color:var(--orange-bright); }
+.slab.lit .sl-n{ background:var(--orange); color:#0a0a0a; }
+.slab .sl-t{ font-family:'Space Grotesk'; font-size:.92rem; font-weight:700; }
+.slab .sl-ph{ margin-left:auto; font-family:'JetBrains Mono'; font-size:.55rem; letter-spacing:.9px; color:#6a6a6a; border:1px solid rgba(255,107,26,.2); border-radius:20px; padding:2px 8px; }
+.slab .sl-d{ font-size:.71rem; color:#7a7269; line-height:1.55; margin-bottom:9px; }
+.slab .sl-tags{ display:flex; flex-wrap:wrap; gap:5px; }
+.slab .sl-tag{ font-family:'JetBrains Mono'; font-size:.57rem; color:#a8a29b; background:rgba(255,107,26,.06); border:1px solid rgba(255,107,26,.15); border-radius:5px; padding:3px 7px; transition:all .35s; }
+.slab.lit .sl-tag{ color:#cfc9c4; border-color:rgba(255,107,26,.28); }
+.slab.active .sl-tag.hot{ color:#ffd9a0; border-color:rgba(255,107,26,.55); background:rgba(255,107,26,.13); box-shadow:0 0 12px rgba(255,107,26,.18); transform:translateY(-2px); }
+.slab-arrow{ position:relative; height:18px; margin:-3px 0 3px; z-index:2; }
+.slab-arrow::before{ content:''; position:absolute; left:50%; top:1px; bottom:1px; width:1px; background:rgba(255,107,26,.2); }
+.slab-arrow i{ position:absolute; left:50%; margin-left:-3px; width:6px; height:6px; border-radius:50%; background:var(--orange-bright); box-shadow:0 0 10px var(--orange-glow); animation:dropDot 2.4s ease-in-out infinite; }
+@keyframes dropDot{ 0%{ top:-2px; opacity:0 } 20%{opacity:1} 80%{opacity:1} 100%{ top:15px; opacity:0 } }
+.slab.skipped{ border-style:dashed; border-color:rgba(255,255,255,.13); background:rgba(255,255,255,.015); }
+.slab.skipped .sl-n{ background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.14); color:#6a6a6a; }
+.slab.skipped .sl-t{ color:#7a7269; }
+.slab.skipped .sl-ph{ color:#7a6a3a; border-color:rgba(234,179,8,.3); }
+
+/* STATS */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; max-width:1340px; margin:0 auto; padding:10px 46px 80px; }
+.stat{ padding:6px 26px; border-left:1px solid rgba(255,107,26,.15); }
+.stat:first-child{ border-left:none; padding-left:0; }
+.stat .num{ font-family:'Space Grotesk'; font-size:2.1rem; font-weight:700; color:var(--orange-bright); }
+.stat .lbl{ font-size:.74rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+/* ===== CONTENT ===== */
+.wrap{ max-width:1200px; margin:0 auto; padding:20px 46px 90px; }
+.blocktitle{ font-family:'Space Grotesk'; font-size:1.7rem; font-weight:700; margin-bottom:8px; }
+.blocksub{ color:var(--muted); margin-bottom:30px; line-height:1.6; max-width:720px; }
+.sec{ margin-bottom:74px; }
+
+/* WHAT THIS IS */
+.ledebox{ background:rgba(14,12,10,.6); border:1px solid rgba(255,107,26,.15); border-radius:20px; padding:30px 34px; }
+.lede{ font-size:1rem; color:#cfc9c4; line-height:1.85; max-width:850px; margin-bottom:16px; }
+.lede:last-child{ margin-bottom:0; }
+.lede b{ color:var(--text); }
+.lede code{ font-family:'JetBrains Mono'; background:rgba(255,107,26,.08); color:var(--orange-bright); padding:2px 7px; border-radius:5px; font-size:.88em; }
+
+/* JOURNEY */
+.jtable{ width:100%; border-collapse:collapse; margin-bottom:14px; }
+.jtable th{ font-family:'JetBrains Mono'; font-size:.63rem; letter-spacing:1.2px; text-transform:uppercase; color:#6a6a6a; text-align:left; padding:0 12px 11px; font-weight:500; }
+.jtable td{ padding:14px 12px; border-top:1px solid rgba(255,107,26,.1); font-size:.83rem; vertical-align:middle; }
+.jtable tr:hover td{ background:rgba(255,107,26,.03); }
+.jtable .jm{ font-family:'Space Grotesk'; font-weight:600; color:#e8e2dc; white-space:nowrap; }
+.jtable .jm span{ font-family:'JetBrains Mono'; font-size:.64rem; color:#5a534c; font-weight:400; display:block; margin-top:2px; }
+.jtable .jnum{ font-family:'JetBrains Mono'; font-size:.82rem; }
+.jtable .jgood{ color:#4ade80; } .jtable .jbad{ color:#f87171; } .jtable .jmid{ color:#facc15; } .jtable .jna{ color:#5a534c; }
+.jtable .jnote{ color:#7a7269; font-size:.78rem; line-height:1.55; }
+.jtable tr.final td{ background:rgba(255,107,26,.05); }
+.jtag{ font-family:'JetBrains Mono'; font-size:.54rem; letter-spacing:.6px; background:var(--orange); color:#0a0a0a; border-radius:20px; padding:2px 8px; margin-left:7px; font-weight:700; }
+.note{ font-size:.78rem; color:#8a8279; line-height:1.7; padding:13px 16px; background:rgba(0,0,0,.22); border-left:2px solid rgba(255,107,26,.4); border-radius:8px; }
+.note b{ color:var(--orange-bright); }
+
+/* ARCHITECTURE + STACK */
+.archgrid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:16px; }
+.archcard{ background:rgba(255,255,255,.02); border:1px solid rgba(255,107,26,.13); border-radius:16px; padding:22px 24px; transition:all .3s; }
+.archcard:hover{ border-color:rgba(255,107,26,.4); }
+.archcard .ac-h{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.archcard .ac-n{ font-family:'JetBrains Mono'; font-size:.6rem; color:var(--orange); letter-spacing:1px; }
+.archcard h5{ font-family:'Space Grotesk'; font-size:1rem; font-weight:600; }
+.archcard .ac-ph{ margin-left:auto; font-family:'JetBrains Mono'; font-size:.55rem; letter-spacing:.8px; color:#6a6a6a; border:1px solid rgba(255,107,26,.2); border-radius:20px; padding:2px 8px; }
+.archcard p{ font-size:.8rem; color:#7a7269; line-height:1.65; margin-bottom:12px; }
+.archcard ul{ list-style:none; }
+.archcard li{ font-family:'JetBrains Mono'; font-size:.7rem; color:#a8a29b; padding:4px 0; display:flex; gap:8px; align-items:baseline; border-top:1px solid rgba(255,107,26,.07); }
+.archcard li:first-child{ border-top:none; }
+.archcard li span{ margin-left:auto; color:#5a534c; font-size:.67rem; }
+
+/* LIMITATIONS */
+.limlist{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+.lim{ background:rgba(255,255,255,.02); border:1px solid rgba(255,107,26,.12); border-radius:13px; overflow:hidden; transition:all .3s; }
+.lim:hover{ border-color:rgba(255,107,26,.35); }
+.lim.extra{ display:none; }
+.lim.extra.show{ display:block; animation:rowIn .45s ease both; }
+@keyframes rowIn{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
+.lim .lh{ display:flex; align-items:center; gap:12px; padding:15px 18px; cursor:pointer; flex-wrap:wrap; }
+.lim .lh:hover{ background:rgba(255,107,26,.04); }
+.lim .lnum{ font-family:'JetBrains Mono'; font-size:.68rem; color:#5a534c; width:20px; }
+.lim .lt{ font-size:.87rem; color:#e8e2dc; font-weight:500; flex:1; min-width:200px; }
+.lim .lchev{ color:var(--orange); font-size:.66rem; transition:transform .3s; }
+.lim.open .lchev{ transform:rotate(90deg); }
+.badge{ font-family:'JetBrains Mono'; font-size:.55rem; letter-spacing:.7px; border-radius:20px; padding:3px 9px; white-space:nowrap; font-weight:700; }
+.b-bug{ background:rgba(239,68,68,.13); color:#f87171; border:1px solid rgba(239,68,68,.45); }
+.b-open{ background:rgba(234,179,8,.1); color:#facc15; border:1px solid rgba(234,179,8,.35); }
+.b-fixed{ background:rgba(34,197,94,.1); color:#4ade80; border:1px solid rgba(34,197,94,.38); }
+.b-design{ background:rgba(255,255,255,.04); color:#8a8279; border:1px solid rgba(255,255,255,.1); }
+.b-page{ background:rgba(255,107,26,.08); color:var(--orange-bright); border:1px solid rgba(255,107,26,.24); font-weight:500; }
+.lim .lb{ max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.lim.open .lb{ max-height:320px; }
+.lim .lbody{ padding:0 18px 16px 50px; font-size:.81rem; color:#a8a29b; line-height:1.75; }
+.lim .lbody code{ font-family:'JetBrains Mono'; background:rgba(0,0,0,.3); color:var(--orange-bright); padding:2px 6px; border-radius:4px; font-size:.9em; }
+.lim .lbody b{ color:var(--text); }
+.lim .lfix{ margin-top:9px; padding-top:9px; border-top:1px solid rgba(255,107,26,.1); font-size:.77rem; color:#7a7269; }
+.lim .lfix b{ color:var(--orange-bright); }
+.viewall{ display:inline-flex; align-items:center; gap:9px; font-family:'JetBrains Mono'; font-size:.74rem; letter-spacing:.6px; color:var(--orange-bright); background:rgba(255,107,26,.06); border:1px solid rgba(255,107,26,.28); border-radius:11px; padding:12px 20px; cursor:pointer; transition:all .25s; }
+.viewall:hover{ background:rgba(255,107,26,.12); border-color:var(--orange); transform:translateY(-2px); }
+.viewall .vchev{ transition:transform .3s; }
+.viewall.open .vchev{ transform:rotate(90deg); }
+
+/* ROADMAP */
+.road{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+.rcard{ background:rgba(255,255,255,.02); border:1px solid rgba(255,107,26,.13); border-radius:14px; padding:19px 20px; transition:all .3s; }
+.rcard:hover{ border-color:rgba(255,107,26,.4); transform:translateY(-3px); }
+.rcard .rn{ font-family:'JetBrains Mono'; font-size:.6rem; letter-spacing:1px; color:var(--orange); margin-bottom:7px; }
+.rcard h5{ font-family:'Space Grotesk'; font-size:.93rem; font-weight:600; margin-bottom:7px; line-height:1.35; }
+.rcard p{ font-size:.77rem; color:#7a7269; line-height:1.6; }
+.rcard code{ font-family:'JetBrains Mono'; background:rgba(255,107,26,.08); color:var(--orange-bright); padding:1px 5px; border-radius:4px; font-size:.88em; }
+
+/* DATA PROVENANCE */
+.disc{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.dcard{ background:rgba(14,12,10,.6); border:1px solid rgba(255,107,26,.15); border-radius:18px; padding:24px 26px; }
+.dcard.warn{ background:linear-gradient(135deg, rgba(234,179,8,.06), rgba(16,14,12,.7)); border-color:rgba(234,179,8,.3); }
+.dcard .dh{ display:flex; align-items:center; gap:11px; margin-bottom:13px; }
+.dcard .dic{ width:33px; height:33px; border-radius:9px; background:rgba(255,107,26,.09); border:1px solid rgba(255,107,26,.3); display:flex; align-items:center; justify-content:center; font-size:.92rem; }
+.dcard.warn .dic{ background:rgba(234,179,8,.09); border-color:rgba(234,179,8,.35); }
+.dcard h5{ font-family:'Space Grotesk'; font-size:1rem; font-weight:700; }
+.dcard p{ font-size:.82rem; color:#a8a29b; line-height:1.75; margin-bottom:9px; }
+.dcard p:last-of-type{ margin-bottom:0; }
+.dcard code{ font-family:'JetBrains Mono'; background:rgba(0,0,0,.3); color:var(--orange-bright); padding:2px 7px; border-radius:5px; font-size:.87em; }
+.dcard.warn code{ color:#facc15; }
+.dcard b{ color:var(--text); }
+.dmeta{ display:flex; flex-wrap:wrap; gap:6px; margin-top:13px; }
+.dmeta span{ font-family:'JetBrains Mono'; font-size:.61rem; color:#a8a29b; background:rgba(255,107,26,.06); border:1px solid rgba(255,107,26,.15); border-radius:5px; padding:4px 8px; }
+
+/* FOOTER */
+.foot{ border-top:1px solid rgba(255,107,26,.13); padding-top:32px; display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+.foot .fl{ flex:1; min-width:260px; }
+.foot h4{ font-family:'Space Grotesk'; font-size:1.12rem; margin-bottom:8px; }
+.foot p{ font-size:.83rem; color:#7a7269; line-height:1.7; max-width:540px; }
+.foot .fr{ display:flex; gap:10px; flex-wrap:wrap; }
+
+.reveal{ opacity:0; transform:translateY(40px); transition:all .7s ease; }
+.reveal.show{ opacity:1; transform:translateY(0); }
+@media(max-width:1100px){ .road{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:960px){
+  .hero{ grid-template-columns:1fr; text-align:center; padding-top:110px; }
+  .hero-right{ order:-1; }
+  .stack{ width:100%; max-width:450px; }
+  .slab{ text-align:left; }
+  .cta-row{ justify-content:center; }
+  .stats{ grid-template-columns:repeat(2,1fr); gap:18px; }
+  .stat{ border-left:none; padding-left:0; }
+  .archgrid,.road,.disc{ grid-template-columns:1fr; }
+  .jtable .jnote{ display:none; }
+  .navlinks a:not(.nav-cta){ display:none; }
+  nav{ padding:14px 20px; }
+  .wrap{ padding:20px 20px 70px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-particles" id="bgp"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+
+<nav>
+  <div class="logo"><span class="mark"></span> FraudGuard AI</div>
+  <div class="navlinks"><a href="index.html">Home</a><a href="detect.html">Detect</a><a href="investigate.html">Investigate</a><a href="ask.html">Ask</a><a href="about.html" class="active">About</a><a href="detect.html" class="nav-cta">Get Started</a></div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-left">
+    <div class="badge-top"><span class="live"></span> ABOUT &#183; ARCHITECTURE &#183; KNOWN LIMITS</div>
+    <h1>
+      <span class="word" style="animation-delay:.10s">Built</span>
+      <span class="word" style="animation-delay:.26s">to</span>
+      <span class="word" style="animation-delay:.42s">be</span>
+      <span class="word" style="animation-delay:.58s"><span class="grad">checked.</span></span>
+    </h1>
+    <p class="sub">A model that scores account-opening applications, a hybrid retriever that grounds every explanation in policy, and a public record of what the system still gets wrong.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#limits">Read the Limitations &#8594;</a>
+      <a class="btn btn-ghost" href="#arch">Architecture</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="stack">
+      <div class="spine"><i></i></div>
+      <div class="slab" id="slab0">
+        <span class="sl-dot"></span><div class="sl-top"><span class="sl-n">01</span><span class="sl-t">Data &amp; Model</span><span class="sl-ph">PHASE 1</span></div>
+        <div class="sl-d">1M applications, preprocessing pipeline, four classifiers compared under 1.1% imbalance.</div>
+        <div class="sl-tags"><span class="sl-tag">pandas</span><span class="sl-tag">scikit-learn</span><span class="sl-tag">SMOTE</span><span class="sl-tag">RandomForest</span></div>
+      </div>
+      <div class="slab-arrow"><i style="animation-delay:0.0s"></i></div>
+      <div class="slab" id="slab1">
+        <span class="sl-dot"></span><div class="sl-top"><span class="sl-n">02</span><span class="sl-t">Retrieval &amp; Grounding</span><span class="sl-ph">PHASE 2</span></div>
+        <div class="sl-d">31 policy sections indexed by keyword and by meaning, fused, passed to an LLM that may cite nothing else.</div>
+        <div class="sl-tags"><span class="sl-tag">BM25Okapi</span><span class="sl-tag">all-MiniLM-L6-v2</span><span class="sl-tag">&#945; = 0.5</span><span class="sl-tag">gpt-oss-120b</span></div>
+      </div>
+      <div class="slab-arrow"><i style="animation-delay:0.6s"></i></div>
+      <div class="slab skipped" id="slab2">
+        <span class="sl-dot"></span><div class="sl-top"><span class="sl-n">03</span><span class="sl-t">Knowledge Graph</span><span class="sl-ph">SCOPED OUT</span></div>
+        <div class="sl-d">Planned, then cut. A NetworkX graph without real traversal logic adds a buzzword, not depth.</div>
+        <div class="sl-tags"><span class="sl-tag">not built</span><span class="sl-tag">decision recorded</span></div>
+      </div>
+      <div class="slab-arrow"><i style="animation-delay:1.2s"></i></div>
+      <div class="slab" id="slab3">
+        <span class="sl-dot"></span><div class="sl-top"><span class="sl-n">04</span><span class="sl-t">Interface</span><span class="sl-ph">PHASE 4</span></div>
+        <div class="sl-d">Five pages that expose the pipeline rather than hide it &#8212; failures shown alongside successes.</div>
+        <div class="sl-tags"><span class="sl-tag">Streamlit</span><span class="sl-tag">Plotly</span><span class="sl-tag">vanilla JS</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="num" data-target="1" data-suffix="M">0</div><div class="lbl">Applications in Dataset</div></div>
+  <div class="stat"><div class="num" data-target="46">0</div><div class="lbl">Features After Encoding</div></div>
+  <div class="stat"><div class="num" data-target="4">0</div><div class="lbl">Models Compared</div></div>
+  <div class="stat"><div class="num" data-target="10">0</div><div class="lbl">Limitations Documented</div></div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== WHAT THIS IS ===== -->
+  <div class="sec reveal">
+    <div class="blocktitle">What this is</div>
+    <div class="blocksub">Two paragraphs, no adjectives.</div>
+    <div class="ledebox">
+      <p class="lede">A fraud-detection system for <b>bank account-opening applications</b>. A Random Forest scores each application on 46 features; the score becomes a 0&#8211;100 risk number with contributing factors. Those factors become a policy question, answered by a hybrid retriever &#8212; <code>BM25</code> for exact terms, <code>all-MiniLM-L6-v2</code> for meaning &#8212; whose top three sections are the <b>only</b> material the language model may use. If they do not answer it, it returns <code>NOT_COVERED</code>.</p>
+      <p class="lede">The hard part was never accuracy. At a <b>1.1%</b> fraud rate, a model that labels everything safe scores 99% and catches nothing. Class weighting, SMOTE, threshold tuning, ranking instead of banding &#8212; every decision here exists to work around that one fact, and each is recorded with what it cost.</p>
+    </div>
+  </div>
+
+  <!-- ===== MODEL JOURNEY ===== -->
+  <div class="sec reveal">
+    <div class="blocktitle">The model journey</div>
+    <div class="blocksub">Four classifiers on the held-out test set. Precision and recall are for the fraud class &#8212; the only class that matters here.</div>
+    <table class="jtable">
+      <thead><tr><th>Model</th><th>Precision</th><th>Recall</th><th>Fraud caught</th><th>What it showed</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="jm">Logistic Regression<span>class_weight=balanced</span></td>
+          <td class="jnum jbad">0.04</td><td class="jnum jgood">0.79</td><td class="jnum">1,747 / 2,206</td>
+          <td class="jnote">Caught most of the fraud and buried reviewers doing it &#8212; 96% of flags were innocent.</td>
+        </tr>
+        <tr>
+          <td class="jm">Random Forest<span>class_weight=balanced</span></td>
+          <td class="jnum jmid">0.25</td><td class="jnum jbad">0.00</td><td class="jnum jbad">1 / 2,206</td>
+          <td class="jnote">Better precision, worse than useless. Proof that precision alone says nothing.</td>
+        </tr>
+        <tr>
+          <td class="jm">RF + balanced_subsample<span>+ threshold tuning</span></td>
+          <td class="jnum jmid">0.175</td><td class="jnum jmid">0.216</td><td class="jnum jna">&#8212;</td>
+          <td class="jnote">Moving the cutoff off 0.5 recovered real recall &#8212; at roughly four false alarms per catch.</td>
+        </tr>
+        <tr class="final">
+          <td class="jm">RF + SMOTE<span class="jtag">DEPLOYED</span><span>the shipped model</span></td>
+          <td class="jnum jna">not recorded</td><td class="jnum jna">not recorded</td><td class="jnum jna">&#8212;</td>
+          <td class="jnote">Metrics were never written down, so none is claimed. What is measured: max probability <b style="color:#ff8c42">0.20</b>.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">The deployed row is blank on purpose. Reconstructing a metric for the model that actually ships is exactly the number an interviewer asks you to derive &#8212; so recording it properly is <b>item 01</b> on the roadmap.</div>
+  </div>
+
+  <!-- ===== ARCHITECTURE / TECH STACK ===== -->
+  <div class="sec reveal" id="arch">
+    <div class="blocktitle">Architecture &amp; stack</div>
+    <div class="blocksub">Versions are the ones the pipeline was last verified against &#8212; the retrieval index was rebuilt on this exact stack and reproduced the notebook&#8217;s scores digit for digit.</div>
+    <div class="archgrid">
+      <div class="archcard">
+        <div class="ac-h"><span class="ac-n">01</span><h5>Scoring</h5><span class="ac-ph">PHASE 1</span></div>
+        <p>EDA, preprocessing pipeline, four classifiers, threshold tuning, and a 0&#8211;100 risk score with contributing factors.</p>
+        <ul>
+          <li>python <span>3.14.5</span></li>
+          <li>pandas / numpy <span>3.0.3 / 2.4.6</span></li>
+          <li>scikit-learn <span>1.9.0</span></li>
+          <li>imbalanced-learn <span>SMOTE</span></li>
+        </ul>
+      </div>
+      <div class="archcard">
+        <div class="ac-h"><span class="ac-n">02</span><h5>Retrieval &amp; generation</h5><span class="ac-ph">PHASE 2</span></div>
+        <p>Six documents chunked on numbered headings, dual-indexed, min&#8211;max normalised and blended before the top three reach the model.</p>
+        <ul>
+          <li>rank-bm25 <span>0.2.2</span></li>
+          <li>sentence-transformers <span>6.0.1</span></li>
+          <li>torch <span>2.14.0</span></li>
+          <li>groq / gpt-oss-120b <span>temp 0.2</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">No vector database. At <b>31 chunks</b>, a <b>31 &#215; 384</b> numpy array plus an in-memory BM25 index beats any server round-trip &#8212; the similarity is one matrix multiply. A vector store earns its place above roughly <b>10&#8309;</b> chunks; adding one here would be architecture for the r&#233;sum&#233;.</div>
+  </div>
+
+  <!-- ===== KEY LIMITATIONS ===== -->
+  <div class="sec reveal" id="limits">
+    <div class="blocktitle">Key limitations</div>
+    <div class="blocksub">The five that most change what this system can honestly claim &#8212; two of them are outright bugs. Ten are documented in total.</div>
+    <div class="limlist" id="limList"></div>
+    <div class="viewall" id="viewAll"><span class="vchev">&#9654;</span><span id="vaText">View all 10 limitations</span></div>
+  </div>
+
+  <!-- ===== ROADMAP ===== -->
+  <div class="sec reveal">
+    <div class="blocktitle">What comes next</div>
+    <div class="blocksub">Ordered by how much each changes what the system can honestly claim.</div>
+    <div class="road">
+      <div class="rcard"><div class="rn">01 &#183; EVALUATION</div><h5>Record the deployed model&#8217;s metrics</h5><p>Re-run evaluation for <code>RF + SMOTE</code> and write down precision, recall, F1 and <code>PR-AUC</code> &#8212; not ROC-AUC, which flatters a classifier at a 1.1% base rate.</p></div>
+      <div class="rcard"><div class="rn">02 &#183; CORRECTNESS</div><h5>Fix the two bugs</h5><p>Replace <code>val &gt; 0</code> with a per-feature direction map, and re-select the threshold on a validation split.</p></div>
+      <div class="rcard"><div class="rn">03 &#183; EXPLAINABILITY</div><h5>Per-case SHAP attribution</h5><p>Signed per-application contributions &#8212; the only way to satisfy <code>05_escalation_procedure &#167;3.1</code>, which the pipeline currently violates.</p></div>
+      <div class="rcard"><div class="rn">04 &#183; RETRIEVAL</div><h5>Widen, then rerank</h5><p>Raise <code>top_k</code>, add a cross-encoder reranker, and split multi-factor queries into one retrieval each.</p></div>
+      <div class="rcard"><div class="rn">05 &#183; CALIBRATION</div><h5>Make the score mean something</h5><p>Probability calibration, or replace fixed bands with population percentile. At a <code>0.20</code> ceiling, HIGH is unreachable.</p></div>
+      <div class="rcard"><div class="rn">06 &#183; VALIDATION</div><h5>Split by time, not at random</h5><p>A temporal split is the honest test of whether the model generalises past its training period.</p></div>
+    </div>
+    <div class="note">The knowledge-graph layer stays scoped out until there is a question it answers better than the current retriever &#8212; relationship features over shared devices and emails would be the reason to build one, not the diagram.</div>
+  </div>
+
+  <!-- ===== DATA PROVENANCE ===== -->
+  <div class="sec reveal">
+    <div class="blocktitle">Data provenance</div>
+    <div class="blocksub">What is real, and what was written for demonstration.</div>
+    <div class="disc">
+      <div class="dcard">
+        <div class="dh"><div class="dic">&#128202;</div><h5>The dataset is real</h5></div>
+        <p><b>Bank Account Fraud (BAF)</b>, NeurIPS 2022 &#8212; a published benchmark for fraud detection under realistic class imbalance.</p>
+        <p>This project uses <code>Base.csv</code> with target <code>fraud_bool</code>. These are <b>account-opening applications</b>, not card transactions &#8212; there is no amount, merchant, currency or location in the data, and nothing on this site invents one.</p>
+        <div class="dmeta"><span>sgpjesus/bank-account-fraud-dataset-neurips-2022</span><span>1,000,000 rows</span><span>~1.1% fraud</span></div>
+      </div>
+      <div class="dcard warn">
+        <div class="dh"><div class="dic">&#9888;</div><h5>The policy corpus is not</h5></div>
+        <p>All six policy documents were <b>written for this project</b>. Every file opens with <code>[ILLUSTRATIVE INTERNAL POLICY &#8212; FOR DEMONSTRATION PURPOSES ONLY]</code>, and that line sits in the indexed text, not just the header.</p>
+        <p>They are not real bank policy and must not be read as guidance. They were authored to be internally consistent and to cite this project&#8217;s own measured findings &#8212; the <b>4.5&#215;</b> address-history figure, the <b>0.58% &#8594; 2.16%</b> income gradient &#8212; so retrieval has something honest to ground against.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="reveal">
+    <div class="foot">
+      <div class="fl">
+        <h4>FraudGuard AI</h4>
+        <p>An end-to-end data science project: exploratory analysis, a modelling pipeline, hybrid retrieval with grounded generation, and an interface that shows the evidence behind every number &#8212; including the numbers that are wrong.</p>
+      </div>
+      <div class="fr">
+        <a class="btn btn-primary" href="#">View the Code &#8594;</a>
+        <a class="btn btn-ghost" href="#limits">Known Limitations</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------- cursor glow (same as every other page) ---------- */
+document.addEventListener('mousemove', function(e){
+  document.getElementById('glow').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)';
+  document.getElementById('glow2').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)';
+});
+
+/* ---------- background particles ---------- */
+var bgp=document.getElementById('bgp');
+for(var i=0;i<16;i++){ var s=document.createElement('i'); s.style.left=(Math.random()*100)+'%'; s.style.animationDuration=(9+Math.random()*10)+'s'; s.style.animationDelay=(Math.random()*10)+'s'; var sc=.5+Math.random()*1.4; s.style.width=(2*sc)+'px'; s.style.height=(2*sc)+'px'; bgp.appendChild(s); }
+
+/* ---------- hero stack: light the layers in, then run continuously ---------- */
+for(var i=0;i<4;i++){
+  (function(i){ setTimeout(function(){
+    var el=document.getElementById('slab'+i);
+    if(el && i!==2) el.classList.add('lit');
+  }, 700+i*380); })(i);
+}
+
+/* the pipeline keeps running: 01 -> 02 -> (03 bypassed) -> 04, forever */
+(function runStack(){
+  var SEQ=[0,1,2,3], step=0, tagTimers=[];
+
+  function cycle(){
+    tagTimers.forEach(clearTimeout); tagTimers=[];
+    document.querySelectorAll('.slab').forEach(function(s){ s.classList.remove('active','bypass'); });
+    document.querySelectorAll('.sl-tag').forEach(function(t){ t.classList.remove('hot'); });
+
+    var i=SEQ[step%SEQ.length]; step++;
+    var el=document.getElementById('slab'+i);
+    if(!el) return;
+
+    if(i===2){
+      /* the scoped-out layer never activates — it only flickers as the flow passes it by */
+      el.classList.add('bypass');
+      return;
+    }
+
+    el.classList.add('active');
+    el.querySelectorAll('.sl-tag').forEach(function(t,k){
+      tagTimers.push(setTimeout(function(){ t.classList.add('hot'); }, 180+k*130));
+    });
+  }
+
+  var timer=setInterval(cycle, 1750);
+  setTimeout(cycle, 2300);
+
+  /* stop the loop while the hero is off-screen, resume when it returns */
+  var hero=document.querySelector('.hero-right');
+  if(hero && 'IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ if(!timer) timer=setInterval(cycle,1750); }
+        else if(timer){ clearInterval(timer); timer=null; }
+      });
+    },{threshold:.15}).observe(hero);
+  }
+})();
+
+/* ============================================================
+   LIMITATIONS — consolidated from every page of this project.
+   The first five are shown by default; `key:false` ones sit
+   behind the "View all 10" toggle.
+   status: bug | open | fixed | design
+   ============================================================ */
+var LIMITS=[
+  { key:true, status:'bug', t:'Active-factor logic treats any positive value as a risk signal', page:'pipeline',
+    body:'The check is <code>if val == 1 or val &gt; 0</code>, so every positive feature value becomes an &#8220;active risk factor.&#8221; That is why <code>current_address_months_count = 365</code> &#8212; thirty years of <b>established</b> address history, a mitigating signal &#8212; was sent into the retrieval query as &#8220;no address history.&#8221; The model then answered the inverted premise correctly.',
+    fix:'A per-feature direction map, replaced later by SHAP signs. First in the queue: it changes what the product tells a reviewer.' },
+
+  { key:true, status:'bug', t:'The operating threshold was selected on the test set', page:'pipeline',
+    body:'The threshold sweeps read precision and recall off the held-out test set and pick the best-looking cutoff. That leaks test information into a deployment decision, so the reported trade-off is optimistic by an unknown margin.',
+    fix:'Select on a validation split; report on test once, after the choice is locked.' },
+
+  { key:true, status:'open', t:'Contributing factors come from global importance, not per-case attribution', page:'Investigate',
+    body:'The factor list takes the model&#8217;s top-10 features <b>overall</b> and keeps those active on the application, so the candidate set is identical for every case. <code>05_escalation_procedure &#167;3.1</code> explicitly requires factors surfaced &#8220;for the specific application&#8221; &#8212; the pipeline fails its own policy library.',
+    fix:'<b>SHAP</b> per-application attribution, giving each feature a signed contribution for that case.' },
+
+  { key:true, status:'open', t:'The model cannot produce a HIGH risk score', page:'Detect &#183; Investigate',
+    body:'The highest fraud probability the deployed model produces on the demo sample is <code>0.20</code>, so on a fixed <code>0&#8211;100</code> scale every case reads LOW and HIGH is unreachable by construction. This is probability compression under a <code>1.1%</code> base rate.',
+    fix:'Probability calibration, or drop fixed bands for population percentile rank.' },
+
+  { key:true, status:'open', t:'The one genuine fraud in the demo sample was missed', page:'Investigate',
+    body:'<code>TXN-665979</code> is the only application in the 100-row sample with <code>fraud_bool = 1</code>. The model scored it <b>9 / 100</b> &#8212; below all five highest-ranked cases, every one of which is legitimate.',
+    fix:'Kept visible on the Investigate page rather than removed. Recording the miss is what makes the threshold choice defensible.' },
+
+  { key:false, status:'open', t:'Retrieval can miss the section that answers the question', page:'Ask',
+    body:'Asking <b>&#8220;How reliable is the risk score itself?&#8221;</b> never retrieves <code>06_model_governance &#167;2</code> &#8212; the section holding the 1-in-6 precision figure. A device-policy section outranks it at <code>0.727</code>. The same failure hit a query naming &#8220;high income applicant,&#8221; which never retrieved the income policy.',
+    fix:'Widen <code>top_k</code>, add a cross-encoder reranker, and split multi-factor queries into one retrieval each.' },
+
+  { key:false, status:'open', t:'Six of the 31 indexed chunks carry no policy content', page:'Ask',
+    body:'Chunking splits on numbered headings, so chunk 0 of every file is its header block &#8212; title, department, &#8220;applies to.&#8221; All six are embedded and retrievable like real sections, occupying <b>19%</b> of the index while being unable to answer anything.',
+    fix:'Drop chunk 0 at index time, or fold the header into sibling chunks as metadata.' },
+
+  { key:false, status:'open', t:'No temporal validation', page:'governance',
+    body:'The train/test split is random, not chronological. A model can score well on a random split by learning period-specific patterns, then degrade immediately on future applications. <code>06_model_governance &#167;2.1</code> records this: never validated on live traffic.',
+    fix:'Split by application date and evaluate forward in time.' },
+
+  { key:false, status:'fixed', t:'SMOTE was applied before cross-validation', page:'caught in notebook',
+    body:'The first <code>GridSearchCV</code> was fitted on <code>X_train_smote</code> &#8212; already oversampled. CV folds shared synthetic neighbours between train and validation, and the search reported an <code>F1</code> far too good for a 1.1% base rate. The next cell redid it on un-oversampled data with <code>class_weight</code>.',
+    fix:'Fixed. SMOTE belongs inside an <code>imblearn.Pipeline</code> so it refits within each fold.' },
+
+  { key:false, status:'design', t:'The policy corpus is written, not sourced', page:'by design',
+    body:'All six documents were authored for this project and open with <code>[ILLUSTRATIVE INTERNAL POLICY]</code>. They are not real bank policy &#8212; they were written to be internally consistent and to cite this project&#8217;s own measured findings, so retrieval has something factual to ground against.',
+    fix:'Intentional, and stated on every page that quotes them.' }
+];
+
+(function buildLimits(){
+  var box=document.getElementById('limList');
+  LIMITS.forEach(function(l,i){
+    var map={bug:['b-bug','BUG'],open:['b-open','OPEN'],fixed:['b-fixed','FIXED'],design:['b-design','BY DESIGN']};
+    var m=map[l.status];
+    var el=document.createElement('div');
+    el.className='lim'+(l.key?'':' extra');
+    el.innerHTML='<div class="lh"><span class="lchev">&#9654;</span><span class="lnum">'+String(i+1).padStart(2,'0')+'</span>'
+      + '<span class="lt">'+l.t+'</span>'
+      + '<span class="badge b-page">'+l.page+'</span>'
+      + '<span class="badge '+m[0]+'">'+m[1]+'</span></div>'
+      + '<div class="lb"><div class="lbody">'+l.body+'<div class="lfix"><b>Fix:</b> '+l.fix+'</div></div></div>';
+    el.querySelector('.lh').onclick=function(){ el.classList.toggle('open'); };
+    box.appendChild(el);
+  });
+})();
+
+document.getElementById('viewAll').onclick=function(){
+  var open=this.classList.toggle('open');
+  document.querySelectorAll('.lim.extra').forEach(function(el,i){
+    if(open){ setTimeout(function(){ el.classList.add('show'); }, i*70); }
+    else el.classList.remove('show');
+  });
+  document.getElementById('vaText').textContent = open ? 'Show only the key five' : 'View all 10 limitations';
+};
+
+/* ---------- count-up stats ---------- */
+function countUp(el){
+  var t=+el.dataset.target, suf=el.dataset.suffix||'', c=0, s=t/50;
+  (function tick(){ c+=s; if(c<t){ el.textContent=Math.floor(c)+suf; requestAnimationFrame(tick); } else el.textContent=t+suf; })();
+}
+var counted=false;
+new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting&&!counted){ counted=true; document.querySelectorAll('.stats .num').forEach(countUp); } }); },{threshold:.4}).observe(document.querySelector('.stats'));
+
+/* ---------- reveal on scroll ---------- */
+var ro=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('show'); }); },{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){ ro.observe(el); });
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Escalation and Investigation Procedure
+Department: Fraud Prevention & Risk
+Applies to: All flagged account-opening applications
+
+1. Purpose
+This procedure describes the workflow an investigator should follow once an application is flagged by the automated risk-scoring system.
+
+2. Risk bands
+2.1 LOW (score below 30): No manual action required. Application proceeds through standard processing.
+2.2 MEDIUM (score 30–69): Application is queued for a single-reviewer check. Reviewer confirms whether any single strong signal (no address history, unverifiable phone, top-decile credit request) is present without corroborating signals; if so, application may be cleared with a note.
+2.3 HIGH (score 70 and above): Application is queued for two-reviewer sign-off. Both reviewers must independently confirm the risk factors before a decision is finalized.
+
+3. Investigation steps
+3.1 Reviewer examines the top contributing factors surfaced by the risk-scoring system for the specific application (not just the overall model-wide feature importance).
+3.2 Reviewer cross-checks each surfaced factor against the relevant policy document (Identity Verification, Device and Session Risk, Income-Based Risk Tiering, or Contact Verification) to determine whether the factor is, on its own, a known weak or strong signal.
+3.3 Reviewer documents which combination of factors drove the decision, for audit purposes.
+
+4. Decision threshold selection
+4.1 The operating decision threshold (the cutoff at which the model flags an application as requiring review) should be selected based on the current cost of a missed fraud versus the cost of an unnecessary manual review, not fixed permanently at a single value.
+4.2 A lower threshold catches more fraud but increases the manual review workload; a higher threshold reduces reviewer workload but risks missing more fraud. This trade-off should be revisited whenever fraud losses or review capacity change materially.
+
+5. Escalation contact
+Cases meeting HIGH band criteria with two-reviewer disagreement should be escalated to the Fraud Prevention team lead for final determination.

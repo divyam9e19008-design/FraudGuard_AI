@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FraudGuard AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{ --orange:#ff6b1a; --orange-bright:#ff8c42; --orange-glow:rgba(255,107,26,.5); --bg:#080706; --text:#f5f5f5; --muted:#9a9a9a; }
+html{ scroll-behavior:smooth; }
+body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+body::before{ content:''; position:fixed; inset:0; z-index:-3; pointer-events:none; background:radial-gradient(800px 600px at 78% 45%, rgba(255,107,26,.14), transparent 60%), radial-gradient(600px 500px at 10% -5%, rgba(255,107,26,.08), transparent 55%); animation:bgShift 10s ease-in-out infinite alternate; }
+@keyframes bgShift{ 0%{opacity:.7} 100%{opacity:1} }
+body::after{ content:''; position:fixed; inset:0; z-index:-2; pointer-events:none; background-image:linear-gradient(rgba(255,107,26,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,26,.02) 1px, transparent 1px); background-size:60px 60px; -webkit-mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); mask-image:radial-gradient(circle at 60% 40%, black, transparent 80%); }
+/* floating bg particles */
+.bg-particles{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.bg-particles i{ position:absolute; width:2px; height:2px; border-radius:50%; background:rgba(255,140,66,.5); animation:drift linear infinite; }
+@keyframes drift{ 0%{ transform:translateY(100vh) scale(0); opacity:0; } 10%{opacity:.7;} 90%{opacity:.7;} 100%{ transform:translateY(-10vh) scale(1); opacity:0; } }
+#glow{ position:fixed; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.13), transparent 62%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .16s cubic-bezier(.22,.61,.36,1); mix-blend-mode:screen; animation:glowPulse 3s ease-in-out infinite; }
+@keyframes glowPulse{ 0%,100%{width:200px;height:200px} 50%{width:250px;height:250px} }
+@keyframes markPulse{ 0%,100%{box-shadow:0 0 14px var(--orange-glow)} 50%{box-shadow:0 0 24px rgba(255,140,66,.8)} }
+#glow2{ position:fixed; width:70px; height:70px; border-radius:50%; background:radial-gradient(circle, rgba(255,160,80,.25), transparent 60%); pointer-events:none; transform:translate(-50%,-50%); z-index:1; transition:transform .06s linear; mix-blend-mode:screen; }
+nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:16px 46px; background:rgba(8,7,6,.5); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,107,26,.1); }
+.logo{ display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; }
+.logo .mark{ width:30px; height:30px; min-width:30px; border-radius:50%; background:linear-gradient(135deg,#ff6b1a,#ff8c42); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px var(--orange-glow); animation:markPulse 3s ease-in-out infinite; }
+.logo .mark::after{ content:''; width:11px; height:11px; background:#080706; border-radius:50%; }
+.navlinks{ display:flex; gap:4px; align-items:center; }
+.navlinks a{ color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:500; padding:8px 15px; border-radius:8px; transition:all .2s; }
+.navlinks a:hover{ color:var(--orange-bright); }
+.navlinks a.active{ color:#fff; }
+.navlinks a.active::after{ content:''; display:block; height:2px; width:60%; margin:3px auto 0; background:var(--orange); border-radius:2px; box-shadow:0 0 8px var(--orange-glow); }
+.nav-cta{ padding:9px 22px !important; border:1px solid var(--orange); border-radius:9px; color:var(--orange-bright) !important; font-weight:600; }
+.nav-cta:hover{ background:rgba(255,107,26,.1); box-shadow:0 0 20px rgba(255,107,26,.3); }
+.hero{ min-height:100vh; display:grid; grid-template-columns:1.02fr .98fr; align-items:center; gap:20px; padding:120px 46px 50px; max-width:1320px; margin:0 auto; position:relative; }
+.hero-left{ z-index:5; }
+.badge-top{ display:inline-flex; align-items:center; gap:9px; padding:7px 17px; border-radius:30px; margin-bottom:26px; background:rgba(255,107,26,.07); border:1px solid rgba(255,107,26,.22); font-size:.82rem; color:#cfc9c4; font-weight:500; animation:fadeUp .8s ease both; }
+.badge-top .live{ width:8px; height:8px; border-radius:50%; background:#22c55e; box-shadow:0 0 10px #22c55e; animation:pulse 1.6s infinite; }
+@keyframes pulse{ 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.35);opacity:.55} }
+.hero h1{ font-family:'Space Grotesk',sans-serif; font-size:clamp(2.6rem,5.6vw,4.6rem); font-weight:700; line-height:1.03; letter-spacing:-2px; margin-bottom:22px; }
+.hero h1 .word{ display:inline-block; opacity:0; transform:translateY(30px) rotateX(-40deg); animation:wordIn .7s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes wordIn{ to{ opacity:1; transform:translateY(0) rotateX(0); } }
+.hero h1 .grad{ background:linear-gradient(100deg,#ff6b1a,#ff8c42,#ffd9a0,#ff8c42,#ff6b1a); background-size:250% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:shimmer 4s linear infinite; cursor:pointer; transition:filter .3s; position:relative; }
+@keyframes shimmer{ to{ background-position:250% center; } }
+.hero h1 .grad:hover{ filter:drop-shadow(0 0 22px rgba(255,140,66,.6)) brightness(1.15); }
+.hero h1 .grad::after{ content:''; position:absolute; left:0; bottom:-6px; height:4px; width:100%; background:linear-gradient(90deg,transparent,var(--orange),transparent); transform:scaleX(0); transform-origin:left; animation:underSweep 1s ease 1.4s forwards; border-radius:4px; }
+@keyframes underSweep{ to{ transform:scaleX(1); } }
+.hero p.sub{ font-size:clamp(1rem,1.6vw,1.18rem); color:var(--muted); max-width:500px; line-height:1.65; margin-bottom:36px; animation:fadeUp .8s ease .9s both; }
+.cta-row{ display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp .8s ease 1.05s both; }
+.btn{ padding:14px 28px; border-radius:12px; font-weight:700; font-size:.94rem; text-decoration:none; transition:all .25s; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:8px; }
+.btn-primary{ background:linear-gradient(90deg,#ff6b1a,#ff8c42); color:#0a0a0a; box-shadow:0 6px 26px rgba(255,107,26,.35); position:relative; overflow:hidden; }
+.btn-primary::after{ content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); animation:btnShine 3.5s ease-in-out infinite; }
+@keyframes btnShine{ 0%{left:-100%} 50%,100%{left:160%} }
+.btn-primary:hover{ transform:translateY(-3px); box-shadow:0 10px 34px rgba(255,107,26,.6); }
+.btn-ghost{ background:transparent; color:var(--text); border:1px solid rgba(255,107,26,.3); }
+.btn-ghost:hover{ background:rgba(255,107,26,.08); border-color:var(--orange); transform:translateY(-3px); }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(26px)} to{opacity:1; transform:translateY(0)} }
+
+/* ===== LIVE FEED ticker ===== */
+.livefeed{ margin-top:32px; max-width:430px; background:rgba(16,13,11,.7); border:1px solid rgba(255,107,26,.18); border-radius:14px; padding:14px 16px; backdrop-filter:blur(8px); animation:fadeUp .8s ease 1.2s both; }
+.livefeed .lf-head{ display:flex; align-items:center; gap:8px; font-size:.72rem; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
+.livefeed .lf-head .rec{ width:7px; height:7px; border-radius:50%; background:#ff3b3b; box-shadow:0 0 8px #ff3b3b; animation:pulse 1.2s infinite; }
+.lf-line{ font-family:'JetBrains Mono',monospace; font-size:.8rem; padding:5px 0; display:flex; align-items:center; gap:9px; opacity:0; transform:translateY(8px); }
+.lf-line.in{ animation:lineIn .5s ease forwards; }
+@keyframes lineIn{ to{opacity:1; transform:translateY(0);} }
+.lf-line .tid{ color:var(--muted); }
+.lf-line .tag{ margin-left:auto; padding:2px 9px; border-radius:20px; font-size:.68rem; font-weight:600; }
+.tag.low{ background:rgba(34,197,94,.14); color:#4ade80; border:1px solid rgba(34,197,94,.3); }
+.tag.med{ background:rgba(234,179,8,.14); color:#facc15; border:1px solid rgba(234,179,8,.3); }
+.tag.high{ background:rgba(239,68,68,.14); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+
+/* ===== GLOBE (alive) ===== */
+.hero-right{ position:relative; height:560px; display:flex; align-items:center; justify-content:center; animation:fadeIn 1.4s ease .3s both; }
+@keyframes fadeIn{ from{opacity:0} to{opacity:1} }
+.globe-wrap{ position:relative; width:480px; height:480px; }
+.globe-outer-glow{ position:absolute; inset:-40px; border-radius:50%; background:radial-gradient(circle, rgba(255,107,26,.16), transparent 62%); animation:corePulse 4s ease-in-out infinite; }
+@keyframes corePulse{ 0%,100%{opacity:.6; transform:scale(1)} 50%{opacity:1; transform:scale(1.05)} }
+.globe{ width:100%; height:100%; animation:spin 44s linear infinite; }
+@keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+/* radar sweep */
+.radar{ position:absolute; inset:20px; border-radius:50%; overflow:hidden; -webkit-mask:radial-gradient(circle, black 68%, transparent 69%); mask:radial-gradient(circle, black 68%, transparent 69%); }
+.radar::before{ content:''; position:absolute; top:50%; left:50%; width:50%; height:50%; transform-origin:top left; background:conic-gradient(from 0deg, rgba(255,140,66,.35), transparent 40%); animation:sweep 4s linear infinite; }
+@keyframes sweep{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.node{ position:absolute; display:flex; align-items:center; gap:7px; padding:6px 13px; border-radius:20px; font-size:.78rem; font-weight:600; background:rgba(20,15,12,.9); border:1px solid rgba(255,107,26,.4); color:#fff; backdrop-filter:blur(6px); white-space:nowrap; box-shadow:0 4px 24px rgba(255,107,26,.15); animation:float 4s ease-in-out infinite; z-index:5; }
+.node .d{ width:7px; height:7px; border-radius:50%; background:var(--orange); box-shadow:0 0 10px var(--orange-glow); animation:pulse 1.6s infinite; }
+.node.n1{ top:14%; left:6%; animation-delay:0s; }
+.node.n2{ top:24%; right:-2%; animation-delay:.8s; }
+.node.n3{ bottom:26%; left:0%; animation-delay:1.6s; }
+.node.n4{ bottom:12%; right:8%; animation-delay:2.4s; }
+@keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+/* pulsing data dots */
+.pdot{ position:absolute; width:5px; height:5px; border-radius:50%; background:#ffb56e; box-shadow:0 0 10px #ff8c42; animation:blip 2.5s ease-in-out infinite; }
+@keyframes blip{ 0%,100%{transform:scale(.6); opacity:.4} 50%{transform:scale(1.4); opacity:1} }
+
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; max-width:1320px; margin:0 auto; padding:0 46px 90px; }
+.stat{ padding:26px 24px; border-radius:16px; text-align:center; background:linear-gradient(160deg, rgba(255,107,26,.07), rgba(16,14,12,.75)); border:1px solid rgba(255,107,26,.16); transition:all .3s; backdrop-filter:blur(6px); }
+.stat:hover{ transform:translateY(-6px); border-color:var(--orange); box-shadow:0 14px 40px rgba(255,107,26,.22); }
+.stat .num{ font-family:'Space Grotesk',sans-serif; font-size:2.3rem; font-weight:700; color:var(--orange-bright); }
+.stat .lbl{ font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.3px; margin-top:6px; }
+.section{ padding:90px 46px; max-width:1200px; margin:0 auto; }
+.sec-tag{ color:var(--orange); font-size:.85rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; }
+.sec-title{ font-family:'Space Grotesk',sans-serif; font-size:clamp(1.8rem,4vw,2.7rem); font-weight:700; letter-spacing:-1px; margin-bottom:16px; }
+.sec-desc{ color:var(--muted); font-size:1.05rem; max-width:560px; line-height:1.6; margin-bottom:52px; }
+.flow{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.flow-card{ position:relative; padding:34px 28px; border-radius:18px; background:linear-gradient(165deg, rgba(20,18,16,.9), rgba(12,11,10,.9)); border:1px solid rgba(255,107,26,.14); transition:all .35s; overflow:hidden; }
+.flow-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--orange), transparent); transform:scaleX(0); transition:transform .4s; }
+.flow-card:hover::before{ transform:scaleX(1); }
+.flow-card:hover{ transform:translateY(-8px); border-color:rgba(255,107,26,.4); box-shadow:0 20px 50px rgba(0,0,0,.5); }
+.flow-num{ font-family:'Space Grotesk',sans-serif; font-size:3rem; font-weight:700; color:rgba(255,107,26,.16); line-height:1; margin-bottom:14px; }
+.flow-icon{ font-size:2rem; margin-bottom:14px; }
+.flow-card h3{ font-size:1.25rem; font-weight:700; margin-bottom:10px; }
+.flow-card p{ color:var(--muted); font-size:.92rem; line-height:1.6; }
+.flow-tag{ display:inline-block; margin-top:16px; padding:4px 12px; border-radius:20px; font-size:.72rem; font-weight:600; letter-spacing:.5px; background:rgba(255,107,26,.1); color:var(--orange-bright); border:1px solid rgba(255,107,26,.25); }
+.cta-strip{ max-width:1200px; margin:20px auto 100px; padding:0 46px; }
+.cta-inner{ position:relative; overflow:hidden; border-radius:24px; padding:56px 50px; text-align:center; background:linear-gradient(120deg, rgba(255,107,26,.14), rgba(255,140,66,.06)); border:1px solid rgba(255,107,26,.3); }
+.cta-inner::before{ content:''; position:absolute; top:-50%; left:-10%; width:60%; height:200%; background:radial-gradient(circle, rgba(255,107,26,.15), transparent 60%); animation:sweep2 6s ease-in-out infinite; }
+@keyframes sweep2{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(120%)} }
+.cta-inner h2{ position:relative; font-family:'Space Grotesk',sans-serif; font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:700; letter-spacing:-1px; margin-bottom:12px; }
+.cta-inner p{ position:relative; color:var(--muted); font-size:1.05rem; margin-bottom:28px; }
+.reveal{ opacity:0; transform:translateY(40px); transition:all .7s ease; }
+.reveal.show{ opacity:1; transform:translateY(0); }
+@media(max-width:920px){ .hero{ grid-template-columns:1fr; text-align:center; padding-top:110px; } .hero-right{ height:380px; order:-1; } .globe-wrap{ width:330px; height:330px; } .cta-row,.livefeed{ margin-left:auto; margin-right:auto; } .cta-row{ justify-content:center; } .stats{ grid-template-columns:repeat(2,1fr); } .flow{ grid-template-columns:1fr; } .navlinks a:not(.nav-cta){ display:none; } nav{ padding:14px 20px; } }
+</style>
+</head>
+<body>
+<div class="bg-particles" id="bgp"></div>
+<div id="glow"></div>
+<div id="glow2"></div>
+<nav>
+  <div class="logo"><span class="mark"></span> FraudGuard AI</div>
+  <div class="navlinks"><a href="index.html" class="active">Home</a><a href="detect.html">Detect</a><a href="investigate.html">Investigate</a><a href="ask.html">Ask</a><a href="about.html">About</a><a href="detect.html" class="nav-cta">Get Started</a></div>
+</nav>
+<header class="hero">
+  <div class="hero-left">
+    <div class="badge-top"><span class="live"></span> Live ML + RAG powered system</div>
+    <h1>
+      <span class="word" style="animation-delay:.15s">Catch</span>
+      <span class="word" style="animation-delay:.30s">fraud.</span><br>
+      <span class="word" style="animation-delay:.55s">Then</span>
+      <span class="word" style="animation-delay:.75s"><span class="grad">explain why.</span></span>
+    </h1>
+    <p class="sub">AI-powered fraud detection with evidence-backed explanations. From risk scores to real answers.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="detect.html">Investigate a Transaction &#8594;</a>
+      <a class="btn btn-ghost" href="ask.html">Ask the Policy AI</a>
+    </div>
+    <div class="livefeed">
+      <div class="lf-head"><span class="rec"></span> Live scoring feed</div>
+      <div id="lfBody"></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="globe-wrap">
+      <div class="globe-outer-glow"></div>
+      <svg class="globe" viewBox="0 0 480 480">
+        <defs><radialGradient id="gg" cx="58%" cy="42%"><stop offset="0%" stop-color="#4a2611"/><stop offset="65%" stop-color="#1a0f08"/><stop offset="100%" stop-color="#0a0605"/></radialGradient></defs>
+        <circle cx="240" cy="240" r="215" fill="url(#gg)" stroke="rgba(255,107,26,.3)" stroke-width="1.2"/>
+        <ellipse cx="240" cy="240" rx="215" ry="66" fill="none" stroke="rgba(255,107,26,.2)" stroke-width="1"/>
+        <ellipse cx="240" cy="240" rx="215" ry="130" fill="none" stroke="rgba(255,107,26,.15)" stroke-width="1"/>
+        <ellipse cx="240" cy="240" rx="215" ry="192" fill="none" stroke="rgba(255,107,26,.1)" stroke-width="1"/>
+        <ellipse cx="240" cy="240" rx="66" ry="215" fill="none" stroke="rgba(255,107,26,.2)" stroke-width="1"/>
+        <ellipse cx="240" cy="240" rx="130" ry="215" fill="none" stroke="rgba(255,107,26,.15)" stroke-width="1"/>
+        <ellipse cx="240" cy="240" rx="192" ry="215" fill="none" stroke="rgba(255,107,26,.1)" stroke-width="1"/>
+        <line x1="150" y1="130" x2="330" y2="260" stroke="rgba(255,140,66,.25)" stroke-width="1"/>
+        <line x1="330" y1="260" x2="200" y2="350" stroke="rgba(255,140,66,.2)" stroke-width="1"/>
+        <line x1="200" y1="350" x2="140" y2="230" stroke="rgba(255,140,66,.2)" stroke-width="1"/>
+        <line x1="140" y1="230" x2="150" y2="130" stroke="rgba(255,140,66,.15)" stroke-width="1"/>
+        <g fill="#ff8c42"><circle cx="150" cy="130" r="3"/><circle cx="330" cy="260" r="3.5"/><circle cx="200" cy="350" r="3"/><circle cx="140" cy="230" r="2.5"/><circle cx="300" cy="150" r="2.5"/><circle cx="360" cy="230" r="2"/><circle cx="110" cy="200" r="2.5"/><circle cx="260" cy="340" r="2"/><circle cx="240" cy="240" r="4" fill="#ff6b1a"/></g>
+      </svg>
+      <div class="radar"></div>
+      <span class="pdot" style="top:28%; left:32%; animation-delay:0s"></span>
+      <span class="pdot" style="top:55%; left:68%; animation-delay:.6s"></span>
+      <span class="pdot" style="top:70%; left:42%; animation-delay:1.2s"></span>
+      <span class="pdot" style="top:40%; left:58%; animation-delay:1.8s"></span>
+      <div class="node n1"><span class="d"></span> Detect</div>
+      <div class="node n2"><span class="d"></span> Investigate</div>
+      <div class="node n3"><span class="d"></span> Explain</div>
+      <div class="node n4"><span class="d"></span> Prevent</div>
+    </div>
+  </div>
+</header>
+<div class="stats">
+  <div class="stat"><div class="num" data-target="100" data-suffix="+">0</div><div class="lbl">Transactions Analyzed</div></div>
+  <div class="stat"><div class="num" data-target="46">0</div><div class="lbl">Risk Features</div></div>
+  <div class="stat"><div class="num" data-target="6">0</div><div class="lbl">Policy Documents</div></div>
+  <div class="stat"><div class="num" data-decimal="0.94">0</div><div class="lbl">ROC-AUC</div></div>
+</div>
+<section class="section">
+  <div class="reveal"><div class="sec-tag">How it works</div><div class="sec-title">Three layers, one decision.</div><p class="sec-desc">Prediction tells you <em>what</em>. Retrieval and reasoning tell you <em>why</em>. Together they turn a raw score into an audit-ready explanation.</p></div>
+  <div class="flow">
+    <div class="flow-card reveal"><div class="flow-num">01</div><div class="flow-icon">&#129302;</div><h3>ML Detection</h3><p>A Random Forest model scores each application, handling severe class imbalance with SMOTE and threshold tuning.</p><span class="flow-tag">PHASE 1</span></div>
+    <div class="flow-card reveal"><div class="flow-num">02</div><div class="flow-icon">&#128270;</div><h3>Hybrid Retrieval</h3><p>BM25 keyword search fused with semantic embeddings pulls the most relevant fraud-policy sections for the flagged factors.</p><span class="flow-tag">PHASE 2</span></div>
+    <div class="flow-card reveal"><div class="flow-num">03</div><div class="flow-icon">&#128203;</div><h3>Grounded Explanation</h3><p>An LLM writes a policy-backed explanation with cited sources &#8212; never hallucinated, always traceable to a real document.</p><span class="flow-tag">PHASE 2</span></div>
+  </div>
+</section>
+<div class="cta-strip reveal"><div class="cta-inner"><h2>Ready to investigate a suspicious transaction?</h2><p>Move from risk score to evidence-backed explanation.</p><a class="btn btn-primary" href="detect.html">Start Investigation &#8594;</a></div></div>
+<script>
+document.addEventListener('mousemove', function(e){ document.getElementById('glow').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)'; document.getElementById('glow2').style.transform='translate('+e.clientX+'px,'+e.clientY+'px) translate(-50%,-50%)'; });
+// bg particles
+var bgp=document.getElementById('bgp');
+for(var i=0;i<26;i++){ var s=document.createElement('i'); s.style.left=(Math.random()*100)+'%'; s.style.animationDuration=(8+Math.random()*10)+'s'; s.style.animationDelay=(Math.random()*10)+'s'; var sc=.5+Math.random()*1.5; s.style.width=(2*sc)+'px'; s.style.height=(2*sc)+'px'; bgp.appendChild(s); }
+// live feed
+var feed=[ ['TXN-824916','Risk 20','low'],['TXN-617362','Risk 74','high'],['TXN-312611','Risk 41','med'],['TXN-498886','Risk 12','low'],['TXN-703118','Risk 88','high'],['TXN-229540','Risk 33','med'],['TXN-556201','Risk 07','low'],['TXN-661093','Risk 69','med'] ];
+var lfBody=document.getElementById('lfBody'); var fi=0;
+function pushLine(){
+  var d=feed[fi%feed.length]; fi++;
+  var row=document.createElement('div'); row.className='lf-line in';
+  row.innerHTML='<span class="tid">'+d[0]+'</span> <span style="color:#cfc9c4">scored</span> <span class="tag '+d[2]+'">'+d[1]+'</span>';
+  lfBody.prepend(row);
+  while(lfBody.children.length>4) lfBody.removeChild(lfBody.lastChild);
+}
+pushLine(); pushLine(); pushLine();
+setInterval(pushLine, 1800);
+// count up
+function countUp(el){ if(el.dataset.decimal){var t=+el.dataset.decimal,c=0,s=t/50;var tick=function(){c+=s;if(c<t){el.textContent=c.toFixed(2);requestAnimationFrame(tick);}else el.textContent=t.toFixed(2);};tick();return;} var t=+el.dataset.target,suf=el.dataset.suffix||'',c=0,s=t/55;var tick=function(){c+=s;if(c<t){el.textContent=Math.floor(c)+suf;requestAnimationFrame(tick);}else el.textContent=t+suf;};tick(); }
+var counted=false;
+new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!counted){counted=true;document.querySelectorAll('.num').forEach(countUp);}});},{threshold:.4}).observe(document.querySelector('.stats'));
+var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('show');});},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
+</script>
+</body>
+</html>

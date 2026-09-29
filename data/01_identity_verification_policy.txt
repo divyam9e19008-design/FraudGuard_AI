@@ -1,0 +1,23 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Identity Verification and Address History Policy
+Department: Fraud Prevention & Risk
+Applies to: New account-opening applications
+
+1. Purpose
+This policy sets out how address history should be treated when assessing the fraud risk of a new account application.
+
+2. Background
+Internal analysis of historical account-opening data found that applicants with no prior recorded address history show a fraud rate approximately 4.5 times higher than applicants with an established address history. This association was confirmed as statistically significant (chi-square test, p < 0.001) and is not attributable to chance.
+
+3. Policy
+3.1 An application where the applicant's previous-address-months field is absent or encoded as unknown (no prior address on record) must be treated as an identity-verification risk signal, not simply as missing data.
+3.2 Absence of address history alone is not sufficient grounds for automatic decline. It should be combined with other signals (income bracket, device signals, contact verification) before a decision is made.
+3.3 Applications with no address history AND at least one additional elevated risk signal (see Device & Session Risk Policy, Contact Verification Policy) should be routed to manual review rather than auto-approved.
+3.4 Applicants with no address history who are otherwise low-risk on all other signals may proceed through standard processing, since new-to-country or first-time applicants legitimately lack address history.
+
+4. Rationale
+Fraudulent applications frequently use newly created or synthetic identities, which by construction lack a prior address trail. Genuine first-time applicants (e.g., young adults, new immigrants) also lack address history, so this signal must always be combined with corroborating evidence rather than used in isolation.
+
+5. Review cadence
+This policy should be re-validated quarterly against updated fraud-rate statistics.

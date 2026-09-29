@@ -1,0 +1,17 @@
+[ILLUSTRATIVE INTERNAL POLICY — FOR DEMONSTRATION PURPOSES ONLY]
+
+Document: Model Governance and Known Limitations
+Department: Fraud Prevention & Risk / Data Science
+Applies to: The automated fraud risk-scoring model
+
+1. Purpose
+This document records the known limitations of the current risk-scoring model so that reviewers and analysts do not over-trust its output.
+
+2. Known limitations
+2.1 The model was trained and validated on a historical, offline dataset. It has not been validated on live traffic, and its performance on future applications may differ from validation-time performance (no temporal validation has been performed).
+2.2 Given the low base rate of fraud (approximately 1.1% of applications), even a well-performing model produces a meaningful number of false positives. At the current selected decision threshold, roughly 1 in 6 flagged applications is expected to be genuinely fraudulent; the remainder are false alarms. Reviewers should treat a "flagged" status as "warrants review," not as a declaration of fraud.
+2.3 Transaction-velocity-style behavioral signals were found, contrary to initial expectation, to be weakly and inversely associated with fraud in this population. This suggests fraud in this particular channel is driven more by identity-related signals than by rapid behavioral bursts, and reviewers should not over-weight velocity signals when investigating a flagged case.
+2.4 The model's overall ranking ability (its ability to separate fraud from non-fraud cases in relative terms) is materially better than its precision at any single fixed threshold, which is expected and typical under severe class imbalance. This is why decision-making is threshold-based and reviewed periodically rather than relying on a single fixed cutoff indefinitely.
+
+3. Reviewer guidance
+Reviewers should treat the risk score and its contributing factors as a prioritization and investigation aid, not as an automated verdict. Final decisions on borderline (MEDIUM/HIGH band) cases remain a human responsibility per the Escalation and Investigation Procedure.
